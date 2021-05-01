@@ -1,5 +1,6 @@
-import UIKit
+import Feature_Products
 import SwiftUI
+import UIKit
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -15,7 +16,13 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 extension SceneDelegate {
     private func setupRootViewController(windowScene: UIWindowScene) {
         let frame = windowScene.coordinateSpace.bounds
-        let rootView = Text("Hello, world!")
+        let rootView = ProductsListView(
+            store: .init(
+                initialState: .init(),
+                reducer: productsListReducer,
+                environment: ProductsListEnvironment()
+            )
+        )
         let rootViewController = UIHostingController(rootView: rootView)
         
         window = .init(frame: frame)

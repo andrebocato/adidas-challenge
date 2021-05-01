@@ -107,6 +107,8 @@ let package = Package(
         .target(
             name: "Feature-Products",
             dependencies: [
+                "Core-UI",
+                "Core-RepositoryInterface",
                 .product(name: "LightInjection", package: "LightInjection"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
             ]

@@ -1,5 +1,6 @@
 import Combine
 import ComposableArchitecture
+import Core_RepositoryInterface
 import Core_UI
 import SwiftUI
 
@@ -50,7 +51,30 @@ public struct ProductsListView: View {
     
     @ViewBuilder
     private func productsList(with viewStore: ProductsListViewStore) -> some View {
-        List(viewStore.products) { product in
+        VStack {
+            SearchBar(
+                text: viewStore.binding(
+                    get: { $0.searchText },
+                    send: { .updateSearchText($0) }
+                )
+            )
+            
+            Divider()
+            
+            if viewStore.isSearching {
+                searchResultsList(products: viewStore.searchResults)
+            } else {
+                searchResultsList(products: viewStore.products)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func searchResultsList(products: [Product]) -> some View {
+        List(products) { product in
+            // @FIXME: The last selected item is not being deselected upon returning to the list.
+            // According to https://developer.apple.com/forums/thread/660468, might be an issue with a List inside a VStack
+            // Tried to add `.id(UUID())` to the navigation link, did not work.
             NavigationLink(
                 destination: ProductDetailView(
                     store: .init(
@@ -63,9 +87,8 @@ public struct ProductsListView: View {
                 ProductListItemView(viewData: .init(from: product))
             }
         }
-        .padding(.zero)
     }
-
+    
     @ViewBuilder
     private func errorView(with viewStore: ProductsListViewStore) -> some View {
         FillerView(

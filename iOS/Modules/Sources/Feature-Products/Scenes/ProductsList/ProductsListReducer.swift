@@ -25,5 +25,18 @@ public let productsListReducer = ProductsListReducer { state, action, environmen
     case .listProducts:
         state.scene = .loadedList
         return .none
+        
+    case let .updateSearchText(text):
+        state.searchText = text
+        
+        guard !text.isEmpty else {
+            return .none
+        }
+        
+        let searchResults = state.products.filter {
+            $0.description.contains(text) || $0.id.contains(text) || $0.name.contains(text)
+        }
+        state.searchResults = searchResults
+        return .none
     }
 }

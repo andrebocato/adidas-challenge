@@ -48,11 +48,12 @@ public final class HTTPRequestDispatcher: HTTPRequestDispatcherProtocol {
                     return data
                 }
                 .mapError { rawError -> HTTPRequestError in
-                    if rawError.isNetworkConnectionError {
-                        return .unreachableNetwork
-                    }
-
                     switch rawError {
+                    case let urlError as URLError:
+                        if urlError.networkUnavailableReason != nil {
+                            return .unreachableNetwork
+                        }
+                        return .urlError(urlError)
                     case let requestError as HTTPRequestError:
                         return requestError
                     default:

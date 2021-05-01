@@ -6,6 +6,8 @@ public enum HTTPRequestError: Error, Equatable {
     case requestSerialization(Error)
     /// Represents some request error, related to the request.
     case networking(Error)
+    /// Some URLError from URLSession
+    case urlError(URLError)
     /// Reffers to when the HTTP response has invalid format.
     case invalidHTTPResponse
     /// Defines that the error was due to network reachability.
@@ -21,6 +23,8 @@ public enum HTTPRequestError: Error, Equatable {
             return e1 as NSError == e2 as NSError
         case let (.networking(e1), .networking(e2)):
             return e1 as NSError == e2 as NSError
+        case let (.urlError(e1), .urlError(e2)):
+            return e1 == e2
         case (.invalidHTTPResponse, .invalidHTTPResponse):
             return true
         case (.unreachableNetwork, .unreachableNetwork):

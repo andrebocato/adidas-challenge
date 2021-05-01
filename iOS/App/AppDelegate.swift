@@ -51,5 +51,14 @@ extension AppDelegate {
             },
             forMetaType: ProductRepositoryProtocol.self
         )
+        
+        LightInjection.registerLazyDependency(
+            factory: {
+                ReviewRepository.init(
+                    dispatcher: appEnvironment.httpDispatcher
+                )
+            },
+            forMetaType: ReviewRepositoryProtocol.self
+        )
     }
 }

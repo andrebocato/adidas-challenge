@@ -21,15 +21,18 @@ public struct ProductsListView: View {
 
     public var body: some View {
         WithViewStore(store) { viewStore in
-            Group {
-                switch viewStore.scene {
-                case .loading:
-                    activityIndicator()
-                case .list:
-                    productsList(with: viewStore)
-                case let .error(message):
-                    errorView(with: viewStore, message)
+            NavigationView {
+                Group {
+                    switch viewStore.scene {
+                    case .loading:
+                        activityIndicator()
+                    case .list:
+                        productsList(with: viewStore)
+                    case let .error(message):
+                        errorView(with: viewStore, message)
+                    }
                 }
+                .navigationBarTitle(L10n.ProductsList.Titles.products)
             }
             .onAppear { viewStore.send(.fetchList) }
         }
@@ -47,9 +50,20 @@ public struct ProductsListView: View {
     
     @ViewBuilder
     private func productsList(with viewStore: ProductsListViewStore) -> some View {
-        List(viewStore.products) { item in
-            ProductListItemView(viewData: .init(from: item))
+        List(viewStore.products) { product in
+            NavigationLink(
+                destination: ProductDetailView(
+                    store: .init(
+                        initialState: .init(viewData: .init(from: product)),
+                        reducer: productDetailReducer,
+                        environment: ProductDetailEnvironment()
+                    )
+                )
+            ) {
+                ProductListItemView(viewData: .init(from: product))
+            }
         }
+        .padding(.zero)
     }
 
     @ViewBuilder

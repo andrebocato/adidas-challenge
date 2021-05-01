@@ -61,8 +61,22 @@ struct ProductDetailView: View {
         }
         
         Button(L10n.ProductDetail.Titles.addReviewButton) {
-            // @TODO: present rating screen as a bottomsheet
+            viewStore.send(.presentingAddReviewSheet(true))
         }
+        .sheet(
+            isPresented: .constant(viewStore.isPresentingAddReviewSheet),
+            onDismiss: { viewStore.send(.presentingAddReviewSheet(false)) },
+            content: {
+                AddReviewView(
+                    store: .init(
+                        initialState: .init(productId: viewStore.productId),
+                        reducer: addReviewReducer,
+                        environment: AddReviewEnvironment(
+                            onSendReviewSuccess: { viewStore.send(.presentingAddReviewSheet(false)) }
+                        )
+                    )
+                )
+            })
         .frame(alignment: .leading)
         .padding()
     }

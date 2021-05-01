@@ -78,7 +78,10 @@ public struct ProductsListView: View {
             NavigationLink(
                 destination: ProductDetailView(
                     store: .init(
-                        initialState: .init(viewData: .init(from: product)),
+                        initialState: .init(
+                            productId: product.id,
+                            viewData: .init(from: product)
+                        ),
                         reducer: productDetailReducer,
                         environment: ProductDetailEnvironment()
                     )

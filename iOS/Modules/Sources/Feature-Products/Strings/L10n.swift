@@ -17,4 +17,15 @@ enum L10n {
             static let addReviewButton: String = "Add review"
         }
     }
+    enum AddReview {
+        enum Titles {
+            static let rating: String = "How would you rate this product?"
+            static let textReview: String = "Describe your experience with it!"
+            static let sendButton: String = "Send Review"
+        }
+        enum Error {
+            static let title: String = "Your review could not be sent."
+            static let buttonTitle: String = "OK"
+        }
+    }
 }

@@ -2,7 +2,9 @@ import Core_RepositoryInterface
 import Foundation
 
 struct ProductDetailState: Equatable {
+    let productId: String
     let viewData: ViewData
+    var isPresentingAddReviewSheet: Bool = false
 }
 
 extension ProductDetailState {
@@ -23,13 +25,12 @@ extension ProductDetailState {
     }
     
     struct ProductReview: Equatable, Identifiable {
-        let id: String
+        let id = UUID()
         let rating: Int
         let text: String
         let locale: String
         
         init(from vo: Review) {
-            id = vo.productId
             rating = vo.rating
             text = vo.text
             locale = vo.locale

@@ -24,12 +24,12 @@ public struct ProductsListView: View {
             NavigationView {
                 Group {
                     switch viewStore.scene {
-                    case .loading:
+                    case .loadingList:
                         activityIndicator()
-                    case .list:
+                    case .loadedList:
                         productsList(with: viewStore)
-                    case let .error(message):
-                        errorView(with: viewStore, message)
+                    case .errorFetchingList:
+                        errorView(with: viewStore)
                     }
                 }
                 .navigationBarTitle(L10n.ProductsList.Titles.products)
@@ -67,8 +67,21 @@ public struct ProductsListView: View {
     }
 
     @ViewBuilder
-    private func errorView(with viewStore: ProductsListViewStore, _ message: String) -> some View {
-        Text(message) // @TODO: show error in a decent way. and allow user to retry request
+    private func errorView(with viewStore: ProductsListViewStore) -> some View {
+        FillerView(
+            model: .init(
+                title: L10n.ProductsList.Error.title,
+                subtitle: L10n.ProductsList.Error.subtitle,
+                image: .init(
+                    sfSymbol: "exclamationmark.circle",
+                    color: .red
+                )
+            ),
+            actionButton: .init(
+                text: L10n.ProductsList.Error.tryAgain,
+                action: { viewStore.send(.fetchList) }
+            )
+        )
     }
 }
 

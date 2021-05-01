@@ -13,14 +13,20 @@ struct ProductListItemView: View {
     var body: some View {
         HStack {
             RemoteImage(url: viewData.imageURL)
-            
-            Spacer()
+                .scaledToFill()
+                .frame(
+                    width: DS.LayoutSize.xLarge.width,
+                    height: DS.LayoutSize.xLarge.height,
+                    alignment: .center
+                )
+                .cornerRadius(DS.CornerRadius.xxSmall)
             
             VStack(alignment: .leading) {
                 Text(viewData.name)
                 Text(viewData.description)
                 Text(viewData.price)
             }
+            Spacer()
         }
     }
 }

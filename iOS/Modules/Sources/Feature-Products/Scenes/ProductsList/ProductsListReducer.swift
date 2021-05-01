@@ -6,7 +6,7 @@ public typealias ProductsListReducer = Reducer<ProductsListState, ProductsListAc
 public let productsListReducer = ProductsListReducer { state, action, environment in
     switch action {
     case .fetchList:
-        state.scene = .loading
+        state.scene = .loadingList
         return environment
             .productsListRepository
             .fetchProductsList()
@@ -19,11 +19,11 @@ public let productsListReducer = ProductsListReducer { state, action, environmen
         return .init(value: .listProducts)
         
     case let .handleList(.failure(error)):
-        state.scene = .error(message: error.localizedDescription) // @TODO: map error in a better way
+        state.scene = .errorFetchingList
         return .none
         
     case .listProducts:
-        state.scene = .list
+        state.scene = .loadedList
         return .none
     }
 }

@@ -1,7 +1,7 @@
 import Core_RepositoryInterface
 
 public struct ProductsListState: Equatable {
-    var scene: Scene = .loading
+    var scene: Scene = .loadingList
     var products: [Product] = []
     
     public init() { }
@@ -11,9 +11,9 @@ public struct ProductsListState: Equatable {
 
 extension ProductsListState {
     public enum Scene: Equatable {
-        case loading
-        case list
-        case error(message: String)
+        case loadingList
+        case loadedList
+        case errorFetchingList
     }
 }
 

@@ -3,7 +3,7 @@ import Foundation
 
 struct ProductDetailState: Equatable {
     let productId: String
-    let viewData: ViewData
+    var viewData: ViewData
     var isPresentingAddReviewSheet: Bool = false
 }
 
@@ -13,7 +13,7 @@ extension ProductDetailState {
         let productName: String
         let productPrice: String
         let productDescription: String
-        let reviews: [ProductReview]
+        var reviews: [ProductReview]
         
         init(from vo: Product) {
             productImageURL = URL(string: vo.imageURL)!

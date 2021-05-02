@@ -61,18 +61,20 @@ struct ProductDetailView: View {
         }
         
         Button(L10n.ProductDetail.Titles.addReviewButton) {
-            viewStore.send(.presentingAddReviewSheet(true))
+            viewStore.send(.presentAddReviewSheet)
         }
         .sheet(
             isPresented: .constant(viewStore.isPresentingAddReviewSheet),
-            onDismiss: { viewStore.send(.presentingAddReviewSheet(false)) },
+            onDismiss: { viewStore.send(.dismissAddReviewSheet()) },
             content: {
                 AddReviewView(
                     store: .init(
                         initialState: .init(productId: viewStore.productId),
                         reducer: addReviewReducer,
                         environment: AddReviewEnvironment(
-                            onSendReviewSuccess: { viewStore.send(.presentingAddReviewSheet(false)) }
+                            onSendReviewSuccess: { newReview in
+                                viewStore.send(.dismissAddReviewSheet(newReview: newReview))
+                            }
                         )
                     )
                 )

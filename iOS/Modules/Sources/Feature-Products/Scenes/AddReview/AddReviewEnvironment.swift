@@ -8,12 +8,12 @@ struct AddReviewEnvironment {
     @Dependency var reviewRepository: ReviewRepositoryProtocol
     var mainQueue: AnySchedulerOf<DispatchQueue>
     var locale: () -> String?
-    let onSendReviewSuccess: () -> Void
+    let onSendReviewSuccess: (Review?) -> Void
     
     public init(
         mainQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue.main.eraseToAnyScheduler(),
         locale: @escaping () -> String? = { Locale.autoupdatingCurrent.languageCode },
-        onSendReviewSuccess: @escaping () -> Void
+        onSendReviewSuccess: @escaping (Review?) -> Void
     ) {
         self.mainQueue = mainQueue
         self.locale = locale

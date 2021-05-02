@@ -27,6 +27,8 @@ let addReviewReducer = AddReviewReducer { state, action, environment in
             rating: state.rating + 1, // Received value is an index (0-based), hence the +1
             text: state.reviewText
         )
+        state.newReview = review
+        
         return environment
             .reviewRepository
             .sendReview(review)
@@ -36,8 +38,9 @@ let addReviewReducer = AddReviewReducer { state, action, environment in
     
     case .handleSendReview(.success(())):
         state.isLoading = false
-        environment.onSendReviewSuccess()
-        return .none
+        return .fireAndForget { [state] in
+            environment.onSendReviewSuccess(state.newReview)
+        }
         
     case let .handleSendReview(.failure(error)):
         state.isLoading = false

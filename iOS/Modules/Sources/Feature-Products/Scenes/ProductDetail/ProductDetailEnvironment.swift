@@ -8,13 +8,16 @@ struct ProductDetailEnvironment {
     var generateUUIDString: () -> String
     @Dependency var productRepository: ProductRepositoryProtocol
     var mainQueue: AnySchedulerOf<DispatchQueue>
+    var currencyFormatter: CurrencyFormatterProtocol
 
     init(
         generateUUIDString: @escaping () -> String = { UUID().uuidString },
-        mainQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue.main.eraseToAnyScheduler()
+        mainQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue.main.eraseToAnyScheduler(),
+        currencyFormatter: CurrencyFormatterProtocol = DefaultCurrencyFormatter()
     ) {
         self.generateUUIDString = generateUUIDString
         self.mainQueue = mainQueue
+        self.currencyFormatter = currencyFormatter
     }
 }
 
@@ -25,11 +28,13 @@ extension ProductDetailEnvironment {
     static func mocking(
         generateUUIDString: @escaping () -> String = { "" },
         productRepository: ProductRepositoryProtocol = ProductRepositoryDummy(),
-        mainQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue.main.eraseToAnyScheduler()
+        mainQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue.main.eraseToAnyScheduler(),
+        currencyFormatter: CurrencyFormatterProtocol = CurrencyFormatterDummy()
     ) -> Self {
         var instance: Self = .init(
             generateUUIDString: generateUUIDString,
-            mainQueue: mainQueue
+            mainQueue: mainQueue,
+            currencyFormatter: currencyFormatter
         )
         instance._productRepository = .resolved(productRepository)
         return instance

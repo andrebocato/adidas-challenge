@@ -26,6 +26,8 @@ final class ProductDetailReducerTests: XCTestCase {
 
     func test_fetchProduct_whenFetchingSucceeds_andStoredProductIsNotNil_shouldDisplayData() {
         // Given
+        let formattedPriceDummy: String = ""
+        
         let mockProduct: Product = .fixture()
         let mockID: String = "mock_id"
         productRepositoryStub.fetchProductWithIDResultToBeReturned = .success(mockProduct)
@@ -55,7 +57,10 @@ final class ProductDetailReducerTests: XCTestCase {
                 )
             }
             
-            let viewData: ProductDetailState.ProductViewData = .init(from: mockProduct)
+            let viewData: ProductDetailState.ProductViewData = .init(
+                from: mockProduct,
+                formattedPrice: formattedPriceDummy
+            )
             newState.scene = .loadedProduct(viewData)
         }
     }

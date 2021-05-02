@@ -6,6 +6,12 @@ typealias ProductDetailReducer = Reducer<ProductDetailState, ProductDetailAction
 let productDetailReducer = ProductDetailReducer { state, action, environment in
     switch action {
     case .onAppear:
+        state.reviewsViewData = state.product.reviews.map {
+            .init(
+                from: $0,
+                id: environment.generateUUIDString()
+            )
+        }
         return .none
         
     case .presentAddReviewSheet:
@@ -15,7 +21,12 @@ let productDetailReducer = ProductDetailReducer { state, action, environment in
     case let .dismissAddReviewSheet(newReview):
         state.isPresentingAddReviewSheet = false
         if let newReview = newReview {
-            state.viewData.reviews.append(.init(from: newReview))
+            state.reviewsViewData.append(
+                .init(
+                    from: newReview,
+                    id: environment.generateUUIDString()
+                )
+            )
         }
         return .none
     }

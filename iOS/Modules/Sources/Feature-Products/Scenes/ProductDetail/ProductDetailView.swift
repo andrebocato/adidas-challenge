@@ -27,7 +27,7 @@ struct ProductDetailView: View {
                 reviewsList(with: viewStore)
             }
             .padding()
-            .navigationBarTitle(viewStore.viewData.productName)
+            .navigationBarTitle(viewStore.productViewData.productName)
             .onAppear { viewStore.send(.onAppear) }
         }
     }
@@ -37,26 +37,26 @@ struct ProductDetailView: View {
     @ViewBuilder
     private func productData(with viewStore: ProductDetailViewStore) -> some View {
         RemoteImage(
-            url: viewStore.viewData.productImageURL
+            url: viewStore.productViewData.productImageURL
         )
         .scaledToFill()
         .padding(.horizontal, DS.Spacing.medium)
         
         VStack {
             HStack {
-                Text(viewStore.viewData.productName)
+                Text(viewStore.productViewData.productName)
                 Spacer()
-                Text(String(viewStore.viewData.productPrice))
+                Text(String(viewStore.productViewData.productPrice))
             }
             Spacer()
-            Text(viewStore.viewData.productDescription)
+            Text(viewStore.productViewData.productDescription)
         }
         .padding()
     }
     
     @ViewBuilder
     private func reviewsList(with viewStore: ProductDetailViewStore) -> some View {
-        List(viewStore.viewData.reviews) { review in
+        List(viewStore.reviewsViewData) { review in
             Text(review.text)
         }
         
@@ -69,7 +69,7 @@ struct ProductDetailView: View {
             content: {
                 AddReviewView(
                     store: .init(
-                        initialState: .init(productId: viewStore.productId),
+                        initialState: .init(productId: viewStore.product.id),
                         reducer: addReviewReducer,
                         environment: AddReviewEnvironment(
                             onSendReviewSuccess: { newReview in

@@ -10,8 +10,8 @@ extension ReviewHTTPRequest: HTTPRequestProtocol {
     
     var path: String {
         switch self {
-        case .sendReview:
-            return "/reviews/1"
+        case let .sendReview(review):
+            return "/reviews/\(review.productId)"
         }
     }
     
@@ -31,6 +31,15 @@ extension ReviewHTTPRequest: HTTPRequestProtocol {
                 "rating": review.rating,
                 "text": review.text
             ])
+        }
+    }
+    
+    var headers: [String : String]? {
+        switch self {
+        case .sendReview:
+            return [
+                "Content-Type": "application/json"
+            ]
         }
     }
 }

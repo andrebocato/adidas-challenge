@@ -22,6 +22,11 @@
                BlueprintName = "Core-NetworkingTests"
                ReferencedContainer = "container:">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "HTTPRequestDispatcherTests/test_dataPublisher_whenConnectionErrorOccurs_shouldReturnUnreachableNetworkError()">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>

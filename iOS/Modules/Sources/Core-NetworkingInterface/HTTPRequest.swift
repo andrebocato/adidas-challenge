@@ -24,3 +24,26 @@ public extension HTTPRequestProtocol {
     var parameters: HTTPRequestParameters { .requestPlain }
     var headers: [String: String]? { nil }
 }
+
+#if DEBUG
+// MARK: - Test Doubles
+
+public struct HTTPRequestDummy: HTTPRequestProtocol {
+    public init() { }
+    
+    public var baseURL: URL { .dummy() }
+    
+    public var path: String { "" }
+    
+    public var method: HTTPMethod { .get }
+}
+
+extension URL {
+    public static func dummy() -> Self {
+        guard let dummyURL = URL(string: "www.dummy.com") else {
+            preconditionFailure("This should have never failed...")
+        }
+        return dummyURL
+    }
+}
+#endif

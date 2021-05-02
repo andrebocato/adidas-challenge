@@ -36,6 +36,11 @@ let package = Package(
             url: "https://github.com/pointfreeco/swift-composable-architecture.git",
             from: "0.17.0"
         ),
+        .package(
+            name: "SnapshotTesting",
+            url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
+            from: "1.8.2"
+        ),
     ],
     targets: [
         // @TODO: add description to modules
@@ -120,6 +125,7 @@ let package = Package(
                 "Feature-Products",
                 "Core-RepositoryInterface",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "SnapshotTesting", package: "SnapshotTesting")
             ]
         ),
     ]

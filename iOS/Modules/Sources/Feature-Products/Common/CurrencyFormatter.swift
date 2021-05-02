@@ -16,19 +16,19 @@ extension CurrencyFormatterProtocol {
 final class DefaultCurrencyFormatter: CurrencyFormatterProtocol {
     
     // MARK: - Dependencies
-
+    
     private let numberFormatter: NumberFormatter
-
+    
     // MARK: - Initializaters
-
+    
     init(
         numberFormatter: NumberFormatter = .init()
     ) {
         self.numberFormatter = numberFormatter
     }
-
+    
     // MARK: - Format Methods
-
+    
     func format(_ value: Double, locale: String, currencyCode: String) -> String {
         numberFormatter.numberStyle = .currency
         numberFormatter.currencyCode = currencyCode
@@ -40,7 +40,14 @@ final class DefaultCurrencyFormatter: CurrencyFormatterProtocol {
 }
 
 #if DEBUG
-    final class CurrencyFormatterDummy: CurrencyFormatterProtocol {
-        func format(_ value: Double, locale: String, currencyCode: String) -> String { "" }
+struct CurrencyFormatterDummy: CurrencyFormatterProtocol {
+    func format(_ value: Double, locale: String, currencyCode: String) -> String { "" }
+}
+
+final class CurrencyFormatterStub: CurrencyFormatterProtocol {
+    public var formatTextToBeReturned: String = ""
+    public func format(_ value: Double, locale: String, currencyCode: String) -> String {
+        formatTextToBeReturned
     }
+}
 #endif

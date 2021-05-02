@@ -19,6 +19,7 @@ final class AddReviewReducerTests: XCTestCase {
         )
     }()
     private let testScheduler = DispatchQueue.test
+    private let reviewRepositoryStub = ReviewRepositoryStub()
     
     // MARK: - Tests
 
@@ -46,7 +47,6 @@ final class AddReviewReducerTests: XCTestCase {
         // Given
         let localeMock: String = "pt-BR"
         var onSendReviewSuccessCalled: Bool = false
-        let reviewRepositoryStub = ReviewRepositoryStub()
         reviewRepositoryStub.sendReviewResultToBeReturned = .success(())
         
         store.environment = .mocking(
@@ -78,7 +78,6 @@ final class AddReviewReducerTests: XCTestCase {
         // Given
         let localeMock: String = "pt-BR"
         var onSendReviewSuccessCalled: Bool = false
-        let reviewRepositoryStub = ReviewRepositoryStub()
         let dummyError: NSError = .init(domain: "", code: -1)
         reviewRepositoryStub.sendReviewResultToBeReturned = .failure(dummyError)
         

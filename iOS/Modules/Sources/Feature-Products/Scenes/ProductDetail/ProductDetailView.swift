@@ -21,42 +21,58 @@ struct ProductDetailView: View {
     
     var body: some View {
         WithViewStore(store) { viewStore in
-            VStack(alignment: .center) {
-                productData(with: viewStore)
-                Spacer()
-                reviewsList(with: viewStore)
+            Group {
+                switch viewStore.scene {
+                case .loadingProduct:
+                    activityIndicator()
+                case let .loadedProduct(viewData):
+                    VStack(alignment: .center) {
+                        productData(with: viewData)
+                        Spacer()
+                        reviewsList(with: viewStore)
+                    }
+                case let .errorFetchingProduct(message):
+                    errorView(with: viewStore, message: message)
+                }
             }
             .padding()
-            .navigationBarTitle(viewStore.productViewData.productName)
-            .onAppear { viewStore.send(.onAppear) }
+            .navigationBarTitle(viewStore.productName)
+            .onAppear { viewStore.send(.fetchProduct) }
         }
     }
     
     // MARK: - View Components
     
     @ViewBuilder
-    private func productData(with viewStore: ProductDetailViewStore) -> some View {
+    private func activityIndicator() -> some View {
+        Spacer()
+        ActivityIndicator()
+        Spacer()
+    }
+    
+    @ViewBuilder
+    private func productData(with viewData: ProductDetailState.ProductViewData) -> some View {
         RemoteImage(
-            url: viewStore.productViewData.productImageURL
+            url: viewData.productImageURL
         )
         .scaledToFill()
         .padding(.horizontal, DS.Spacing.medium)
         
         VStack {
             HStack {
-                Text(viewStore.productViewData.productName)
+                Text(viewData.productName)
                 Spacer()
-                Text(String(viewStore.productViewData.productPrice))
+                Text(String(viewData.productPrice))
             }
             Spacer()
-            Text(viewStore.productViewData.productDescription)
+            Text(viewData.productDescription)
         }
         .padding()
     }
     
     @ViewBuilder
     private func reviewsList(with viewStore: ProductDetailViewStore) -> some View {
-        List(viewStore.reviewsViewData) { review in
+        List(viewStore.reviews) { review in
             Text(review.text)
         }
         
@@ -69,7 +85,7 @@ struct ProductDetailView: View {
             content: {
                 AddReviewView(
                     store: .init(
-                        initialState: .init(productId: viewStore.product.id),
+                        initialState: .init(productId: viewStore.productId),
                         reducer: addReviewReducer,
                         environment: AddReviewEnvironment(
                             onSendReviewSuccess: { newReview in
@@ -81,5 +97,23 @@ struct ProductDetailView: View {
             })
         .frame(alignment: .leading)
         .padding()
+    }
+    
+    @ViewBuilder
+    private func errorView(with viewStore: ProductDetailViewStore, message: String) -> some View {
+        FillerView(
+            model: .init(
+                title: L10n.ProductDetail.Error.title,
+                subtitle: message,
+                image: .init(
+                    sfSymbol: "exclamationmark.circle",
+                    color: .red
+                )
+            ),
+            actionButton: .init(
+                text: L10n.ProductDetail.Error.tryAgain,
+                action: { viewStore.send(.fetchProduct) }
+            )
+        )
     }
 }

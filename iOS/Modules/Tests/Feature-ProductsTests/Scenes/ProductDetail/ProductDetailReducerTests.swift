@@ -9,8 +9,8 @@ final class ProductDetailReducerTests: XCTestCase {
     // MARK: - Properties
     
     private var initialState: ProductDetailState = .init(
-        product: .fixture(),
-        productViewData: .init(from: .fixture())
+        productId: "",
+        productName: ""
     )
     private lazy var store: TestStore = {
         .init(
@@ -19,62 +19,86 @@ final class ProductDetailReducerTests: XCTestCase {
             environment: .dummy
         )
     }()
+    private let testScheduler = DispatchQueue.test
+    private let productRepositoryStub = ProductRepositoryStub()
     
     // MARK: - Tests
-    
-    func test_onAppear_shouldPopulateReviewsViewData() {
+
+    func test_fetchProduct_whenFetchingSucceeds_andStoredProductIsNotNil_shouldDisplayData() {
         // Given
-        let productMock: Product = .fixture(
-            reviews: [
-                .fixture(
-                    productId: "same_id",
-                    locale: "locale_1",
-                    rating: 1,
-                    text: "review_text_1"
-                ),
-                .fixture(
-                    productId: "same_id",
-                    locale: "locale_2",
-                    rating: 2,
-                    text: "review_text_2"
-                ),.fixture(
-                    productId: "same_id",
-                    locale: "locale_3",
-                    rating: 3,
-                    text: "review_text_3"
-                )
-            ]
-        )
-        let dummyProductViewData: ProductDetailState.ProductViewData = .init(from: .fixture())
-        initialState = .init(
-            product: productMock,
-            productViewData: dummyProductViewData
-        )
+        let mockProduct: Product = .fixture()
+        let mockID: String = "mock_id"
+        productRepositoryStub.fetchProductWithIDResultToBeReturned = .success(mockProduct)
         
-        let mockID: String = "mocked_id"
         store.environment = .mocking(
-            generateUUIDString: { mockID }
+            generateUUIDString: { mockID },
+            productRepository: productRepositoryStub,
+            mainQueue: testScheduler.eraseToAnyScheduler()
         )
         
-        let expectedReviewsViewData: [ProductDetailState.ReviewViewData] = productMock
-            .reviews
-            .map {
+        // When / Then
+        store.send(.fetchProduct) { newState in
+            newState.scene = .loadingProduct
+            XCTAssertNil(newState.product)
+        }
+        testScheduler.advance()
+        store.receive(.handleFetchProduct(.success(mockProduct))) { newState in
+            newState.product = mockProduct
+        }
+        store.receive(.populateView) { newState in
+            XCTAssertNotNil(newState.product)
+            
+            newState.reviews = mockProduct.reviews.map {
                 .init(
                     from: $0,
                     id: mockID
                 )
             }
+            
+            let viewData: ProductDetailState.ProductViewData = .init(from: mockProduct)
+            newState.scene = .loadedProduct(viewData)
+        }
+    }
+    
+    func test_populateView_whenStoredProductIsNil_shouldDisplayUnexpectedError() {
+        // Given
+        let unexpectedErrorMessage: String = L10n.ProductDetail.Error.unexpectedMessage
+        
+        let nilProduct: Product? = nil
+        initialState.product = nilProduct
         
         // When / Then
-        store.send(.onAppear) { newState in
-            XCTAssertTrue(newState.reviewsViewData.isEmpty)
-            newState.reviewsViewData = expectedReviewsViewData
-            
-            XCTAssertFalse(newState.reviewsViewData.isEmpty)
-            XCTAssertEqual(
-                newState.reviewsViewData,
-                expectedReviewsViewData
-            )
+        store.send(.populateView) { newState in
+            XCTAssertNil(newState.product)
+        }
+        store.receive(.displayError(message: unexpectedErrorMessage)) { newState in
+            newState.scene = .errorFetchingProduct(message: unexpectedErrorMessage)
+        }
+    }
+    
+    func test_fetchProduct_whenFetchingFails_shouldDisplayNetworkingError() {
+        // Given
+        let networkingErrorMessage: String = L10n.ProductDetail.Error.networkingMessage
+        
+        let dummyError: NSError = .init(domain: "", code: -1)
+        productRepositoryStub.fetchProductWithIDResultToBeReturned = .failure(dummyError)
+        
+        store.environment = .mocking(
+            productRepository: productRepositoryStub,
+            mainQueue: testScheduler.eraseToAnyScheduler()
+        )
+        
+        // When / Then
+        store.send(.fetchProduct) { newState in
+            newState.scene = .loadingProduct
+            XCTAssertNil(newState.product)
+        }
+        testScheduler.advance()
+        store.receive(.handleFetchProduct(.failure(dummyError))) { newState in
+            XCTAssertNil(newState.product)
+        }
+        store.receive(.displayError(message: networkingErrorMessage)) { newState in
+            newState.scene = .errorFetchingProduct(message: networkingErrorMessage)
         }
     }
     
@@ -88,26 +112,7 @@ final class ProductDetailReducerTests: XCTestCase {
     func test_reviewPresentation_whenSheetIsDismissed_andNoReviewIsPassed_shouldNotAddReviewToReviewsDataList() {
         // Given
         let nilReview: Review? = nil
-        
-        let dummyProduct: Product = .fixture()
-        initialState = .init(
-            product: dummyProduct,
-            productViewData: .init(from: dummyProduct),
-            reviewsViewData: [
-                .init(
-                    from: .fixture(),
-                    id: "dummy_id"
-                ),
-                .init(
-                    from: .fixture(),
-                    id: "dummy_id"
-                ),
-                .init(
-                    from: .fixture(),
-                    id: "dummy_id"
-                )
-            ]
-        )
+        initialState.reviews = [.fixture(), .fixture(), .fixture()]
         
         // When
         store.send(.dismissAddReviewSheet(newReview: nilReview)) { newState in
@@ -115,8 +120,8 @@ final class ProductDetailReducerTests: XCTestCase {
             
             // Then
             XCTAssertEqual(
-                self.initialState.reviewsViewData,
-                newState.reviewsViewData
+                self.initialState.reviews,
+                newState.reviews
             )
         }
     }
@@ -126,26 +131,12 @@ final class ProductDetailReducerTests: XCTestCase {
         let newReview: Review = .fixture()
         let mockID: String = "mock_id"
         
-        let dummyProduct: Product = .fixture()
         let initialReviewsViewData: [ProductDetailState.ReviewViewData] = [
-            .init(
-                from: .fixture(),
-                id: mockID
-            ),
-            .init(
-                from: .fixture(),
-                id: mockID
-            ),
-            .init(
-                from: .fixture(),
-                id: mockID
-            )
+            .fixture(id: mockID),
+            .fixture(id: mockID),
+            .fixture(id: mockID)
         ]
-        initialState = .init(
-            product: dummyProduct,
-            productViewData: .init(from: dummyProduct),
-            reviewsViewData: initialReviewsViewData
-        )
+        initialState.reviews = initialReviewsViewData
         store.environment = .mocking(
             generateUUIDString: { mockID }
         )
@@ -162,14 +153,13 @@ final class ProductDetailReducerTests: XCTestCase {
                 )
             )
             
-            newState.reviewsViewData = updatedReviewsViewData
+            newState.reviews = updatedReviewsViewData
             
             // Then
             XCTAssertEqual(
-                newState.reviewsViewData.count,
-                self.initialState.reviewsViewData.count + 1
+                newState.reviews.count,
+                self.initialState.reviews.count + 1
             )
         }
-
     }
 }

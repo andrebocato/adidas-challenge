@@ -79,8 +79,8 @@ public struct ProductsListView: View {
                 destination: ProductDetailView(
                     store: .init(
                         initialState: .init(
-                            product: product,
-                            productViewData: .init(from: product)
+                            productId: product.id,
+                            productName: product.name
                         ),
                         reducer: productDetailReducer,
                         environment: ProductDetailEnvironment()

@@ -48,6 +48,8 @@ extension DS {
     public enum CornerRadius {
         /// CGFloat = 8
         public static let xxSmall: CGFloat = 8
+        /// CGFloat = 16
+        public static let small: CGFloat = 16
     }
 }
 

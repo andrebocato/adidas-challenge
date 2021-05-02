@@ -6,7 +6,7 @@ typealias ProductDetailReducer = Reducer<ProductDetailState, ProductDetailAction
 let productDetailReducer = ProductDetailReducer { state, action, environment in
     switch action {
     case .fetchProduct:
-        guard state.product == nil else { return .none }
+        guard state.shouldFetchProduct else { return .none }
         state.scene = .loadingProduct
         return environment
             .productRepository
@@ -38,7 +38,10 @@ let productDetailReducer = ProductDetailReducer { state, action, environment in
             )
         }
         
-        let productViewData: ProductDetailState.ProductViewData = .init(from: product)
+        let productViewData: ProductDetailState.ProductViewData = .init(
+            from: product,
+            formattedPrice: environment.currencyFormatter.format(product.price)
+        )
         state.scene = .loadedProduct(productViewData)
         return .none
         

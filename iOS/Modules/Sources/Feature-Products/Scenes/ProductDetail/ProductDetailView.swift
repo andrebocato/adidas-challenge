@@ -37,6 +37,23 @@ struct ProductDetailView: View {
             }
             .padding()
             .navigationBarTitle(viewStore.productName)
+            .sheet(
+                isPresented: .constant(viewStore.isPresentingAddReviewSheet),
+                onDismiss: { viewStore.send(.dismissAddReviewSheet()) },
+                content: {
+                    AddReviewView(
+                        store: .init(
+                            initialState: .init(productId: viewStore.productId),
+                            reducer: addReviewReducer,
+                            environment: AddReviewEnvironment(
+                                onSendReviewSuccess: { newReview in
+                                    viewStore.send(.dismissAddReviewSheet(newReview: newReview))
+                                }
+                            )
+                        )
+                    )
+                }
+            )
             .onAppear { viewStore.send(.fetchProduct) }
         }
     }
@@ -56,45 +73,74 @@ struct ProductDetailView: View {
             url: viewData.productImageURL
         )
         .scaledToFill()
+        .cornerRadius(DS.CornerRadius.xxSmall)
         .padding(.horizontal, DS.Spacing.medium)
         
-        VStack {
+        VStack(alignment: .leading) {
             HStack {
                 Text(viewData.productName)
+                    .font(.callout)
                 Spacer()
-                Text(String(viewData.productPrice))
+                Text(String(viewData.formattedPrice))
+                    .font(.callout)
+                Spacer()
             }
-            Spacer()
             Text(viewData.productDescription)
+                .font(.caption)
+                .italic()
+                .frame(alignment: .leading)
+                .padding(.top, DS.Spacing.small)
         }
-        .padding()
+        .padding(DS.Spacing.small)
     }
     
     @ViewBuilder
     private func reviewsList(with viewStore: ProductDetailViewStore) -> some View {
-        List(viewStore.reviews) { review in
-            Text(review.text)
+        HStack {
+            Text("\(viewStore.reviews.count) customers reviewed this product")
+                .foregroundColor(.secondary)
+                .frame(alignment: .leading)
+                .padding(.horizontal, DS.Spacing.small)
+            Spacer()
         }
         
-        Button(L10n.ProductDetail.Titles.addReviewButton) {
-            viewStore.send(.presentAddReviewSheet)
-        }
-        .sheet(
-            isPresented: .constant(viewStore.isPresentingAddReviewSheet),
-            onDismiss: { viewStore.send(.dismissAddReviewSheet()) },
-            content: {
-                AddReviewView(
-                    store: .init(
-                        initialState: .init(productId: viewStore.productId),
-                        reducer: addReviewReducer,
-                        environment: AddReviewEnvironment(
-                            onSendReviewSuccess: { newReview in
-                                viewStore.send(.dismissAddReviewSheet(newReview: newReview))
-                            }
-                        )
-                    )
+        List(viewStore.reviews) { review in
+            ProductDetailReviewItemView(
+                viewData: .init(
+                    text: review.text,
+                    rating: String(review.rating)
                 )
-            })
+            )
+        }
+        .overlay(
+            RoundedRectangle(
+                cornerRadius: DS.CornerRadius.xxSmall,
+                style: .continuous
+            )
+            .stroke(Color.secondary)
+        )
+        .padding(.horizontal, DS.Spacing.small)
+        
+        Button( // @TODO: make this button into a component
+            action: { viewStore.send(.presentAddReviewSheet) }
+        ) {
+            HStack(alignment: .center) {
+                Text(L10n.ProductDetail.Titles.addReviewButton)
+                    .bold()
+                Image(systemName: "pencil")
+            }
+            .padding()
+            .background(Color.blue)
+            .overlay(
+                RoundedRectangle(
+                    cornerRadius: DS.CornerRadius.small,
+                    style: .continuous
+                )
+                .stroke(Color.blue)
+            )
+            .foregroundColor(.white)
+            .cornerRadius(DS.CornerRadius.small)
+        }
         .frame(alignment: .leading)
         .padding()
     }

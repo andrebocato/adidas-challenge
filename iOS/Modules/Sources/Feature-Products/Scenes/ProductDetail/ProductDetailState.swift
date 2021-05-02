@@ -12,16 +12,30 @@ struct ProductDetailState: Equatable {
 }
 
 extension ProductDetailState {
+    var shouldFetchProduct: Bool {
+        switch scene {
+        case .errorFetchingProduct, .loadedProduct:
+            return false
+        default:
+            return product == nil
+        }
+    }
+}
+
+extension ProductDetailState {
     struct ProductViewData: Equatable {
         let productImageURL: URL
         let productName: String
-        let productPrice: String
+        let formattedPrice: String
         let productDescription: String
         
-        init(from vo: Product) {
+        init(
+            from vo: Product,
+            formattedPrice: String
+        ) {
             productImageURL = URL(string: vo.imageURL)!
             productName = vo.name
-            productPrice = String(vo.price)
+            self.formattedPrice = formattedPrice
             productDescription = vo.description
         }
     }

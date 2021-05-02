@@ -6,10 +6,13 @@ protocol RequestBuilderProtocol {
 }
 
 final class DefaultRequestBuilder: RequestBuilderProtocol {
+    
     // MARK: - Dependencies
 
     private let jsonSerializer: JSONSerialization.Type
 
+    // MARK: - Initializers
+    
     init(jsonSerializer: JSONSerialization.Type = JSONSerialization.self) {
         self.jsonSerializer = jsonSerializer
     }
@@ -48,3 +51,30 @@ final class DefaultRequestBuilder: RequestBuilderProtocol {
         return urlRequest
     }
 }
+
+#if DEBUG
+// MARK: - Test Doubles
+
+struct RequestBuilderDummy: RequestBuilderProtocol {
+    init() { }
+    
+    func build(from request: HTTPRequestProtocol) throws -> URLRequest {
+        .init(url: .dummy())
+    }
+}
+
+final class RequestBuilderStub: RequestBuilderProtocol {
+    init() { }
+
+    var buildResultToBeReturned: Result<URLRequest, Error> = .success(.init(url: .dummy()))
+    
+    func build(from request: HTTPRequestProtocol) throws -> URLRequest {
+        switch buildResultToBeReturned {
+        case let .success(urlRequest):
+            return urlRequest
+        case let .failure(error):
+            throw error
+        }
+    }
+}
+#endif

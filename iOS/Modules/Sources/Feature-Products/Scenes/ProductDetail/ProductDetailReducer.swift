@@ -6,6 +6,7 @@ typealias ProductDetailReducer = Reducer<ProductDetailState, ProductDetailAction
 let productDetailReducer = ProductDetailReducer { state, action, environment in
     switch action {
     case .fetchProduct:
+        guard state.product == nil else { return .none }
         state.scene = .loadingProduct
         return environment
             .productRepository
@@ -20,13 +21,13 @@ let productDetailReducer = ProductDetailReducer { state, action, environment in
         
     case let .handleFetchProduct(.failure(error)):
         return .init(
-            value: .displayError(message: "Networking error")
+            value: .displayError(message: L10n.ProductDetail.Error.networkingMessage)
         )
         
     case .populateView:
         guard let product = state.product else {
             return .init(
-                value: .displayError(message: "Unexpected error")
+                value: .displayError(message: L10n.ProductDetail.Error.unexpectedMessage)
             )
         }
         

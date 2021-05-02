@@ -21,24 +21,22 @@ struct ProductDetailView: View {
     
     var body: some View {
         WithViewStore(store) { viewStore in
-            NavigationView { // @FIXME: only Group was causing a loop in onAppear, making it load forever. Embedding in a NavigationView solves it, but creates a blank bar on top of the content and does not show reviews list because of it.
-                Group {
-                    switch viewStore.scene {
-                    case .loadingProduct:
-                        activityIndicator()
-                    case let .loadedProduct(viewData):
-                        VStack(alignment: .center) {
-                            productData(with: viewData)
-                            Spacer()
-                            reviewsList(with: viewStore)
-                        }
-                    case let .errorFetchingProduct(message):
-                        errorView(with: viewStore, message: message)
+            Group {
+                switch viewStore.scene {
+                case .loadingProduct:
+                    activityIndicator()
+                case let .loadedProduct(viewData):
+                    VStack(alignment: .center) {
+                        productData(with: viewData)
+                        Spacer()
+                        reviewsList(with: viewStore)
                     }
+                case let .errorFetchingProduct(message):
+                    errorView(with: viewStore, message: message)
                 }
-                .padding()
-                .navigationBarTitle(viewStore.productName)
             }
+            .padding()
+            .navigationBarTitle(viewStore.productName)
             .onAppear { viewStore.send(.fetchProduct) }
         }
     }
@@ -105,7 +103,7 @@ struct ProductDetailView: View {
     private func errorView(with viewStore: ProductDetailViewStore, message: String) -> some View {
         FillerView(
             model: .init(
-                title: "Error title",
+                title: L10n.ProductDetail.Error.title,
                 subtitle: message,
                 image: .init(
                     sfSymbol: "exclamationmark.circle",
@@ -113,7 +111,7 @@ struct ProductDetailView: View {
                 )
             ),
             actionButton: .init(
-                text: "Try again",
+                text: L10n.ProductDetail.Error.tryAgain,
                 action: { viewStore.send(.fetchProduct) }
             )
         )

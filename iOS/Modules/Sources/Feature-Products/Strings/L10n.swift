@@ -16,6 +16,12 @@ enum L10n {
         enum Titles {
             static let addReviewButton: String = "Add review"
         }
+        enum Error {
+            static let title: String = "Something went wrong..."
+            static let networkingMessage: String = "An error occured on our side"
+            static let unexpectedMessage: String = "Something unexpected happened"
+            static let tryAgain: String = "Try again"
+        }
     }
     enum AddReview {
         enum Titles {

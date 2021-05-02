@@ -49,3 +49,17 @@ extension ProductDetailState {
         case errorFetchingProduct(message: String)
     }
 }
+
+#if DEBUG
+extension ProductDetailState.ReviewViewData {
+    static func fixture(
+        from vo: Review = .fixture(),
+        id: String = ""
+    ) -> Self {
+        .init(
+            from: vo,
+            id: id
+        )
+    }
+}
+#endif

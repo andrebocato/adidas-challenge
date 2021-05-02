@@ -13,3 +13,20 @@ public struct ProductsListEnvironment {
         self.mainQueue = mainQueue
     }
 }
+
+#if DEBUG
+extension ProductsListEnvironment {
+    static let dummy: Self = .mocking()
+    
+    static func mocking(
+        mainQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue.main.eraseToAnyScheduler(),
+        productsListRepository: ProductRepositoryProtocol = ProductRepositoryDummy()
+    ) -> Self {
+        var instance: Self = .init(
+            mainQueue: mainQueue
+        )
+        instance._productsListRepository = .resolved(productsListRepository)
+        return instance
+    }
+}
+#endif

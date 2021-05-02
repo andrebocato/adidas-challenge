@@ -8,7 +8,11 @@ public struct ProductsListState: Equatable {
     
     var isSearching: Bool { !searchText.isEmpty }
     
-    public init() { }
+    public init(
+        products: [Product] = []
+    ) {
+        self.products = products
+    }
 }
 
 // MARK: - Scene

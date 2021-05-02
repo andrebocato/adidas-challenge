@@ -3,6 +3,7 @@ import Foundation
 
 enum ProductHTTPRequest {
     case fetchAll
+    case fetchProduct(id: String)
 }
 
 extension ProductHTTPRequest: HTTPRequestProtocol {
@@ -12,12 +13,14 @@ extension ProductHTTPRequest: HTTPRequestProtocol {
         switch self {
         case .fetchAll:
             return "/product"
+        case let .fetchProduct(id):
+            return "/product/\(id)"
         }
     }
     
     var method: HTTPMethod {
         switch self {
-        case .fetchAll:
+        case .fetchAll, .fetchProduct:
             return .get
         }
     }

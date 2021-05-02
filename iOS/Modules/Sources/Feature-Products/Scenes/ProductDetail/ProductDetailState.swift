@@ -2,10 +2,13 @@ import Core_RepositoryInterface
 import Foundation
 
 struct ProductDetailState: Equatable {
-    let product: Product
-    let productViewData: ProductViewData
-    var reviewsViewData: [ReviewViewData] = []
+    let productId: String
+    let productName: String
+    
+    var product: Product? = nil
+    var reviews: [ReviewViewData] = []
     var isPresentingAddReviewSheet: Bool = false
+    var scene: Scene = .loadingProduct
 }
 
 extension ProductDetailState {
@@ -38,5 +41,11 @@ extension ProductDetailState {
             text = vo.text
             locale = vo.locale
         }
+    }
+    
+    enum Scene: Equatable {
+        case loadingProduct
+        case loadedProduct(ProductViewData)
+        case errorFetchingProduct(message: String)
     }
 }

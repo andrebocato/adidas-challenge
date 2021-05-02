@@ -32,4 +32,15 @@ public final class ProductRepository: ProductRepositoryProtocol {
             }
             .eraseToAnyPublisher()
     }
+    
+    public func fetchProduct(withID id: String) -> AnyPublisher<Product, Error> {
+        let request: ProductHTTPRequest = .fetchProduct(id: id)
+        return dispatcher
+            .dataPublisher(for: request)
+            .tryMap { [decoder] data in
+                let decodedObject = try decoder.decode(ProductDTO.self, from: data)
+                return .init(from: decodedObject)
+            }
+            .eraseToAnyPublisher()
+    }
 }

@@ -118,6 +118,7 @@ let package = Package(
             name: "Feature-ProductsTests",
             dependencies: [
                 "Feature-Products",
+                "Core-RepositoryInterface",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]
         ),

@@ -18,3 +18,21 @@ public struct Review: Equatable {
         self.text = text
     }
 }
+
+#if DEBUG
+extension Review {
+    public static func fixture(
+        productId: String = "",
+        locale: String = "",
+        rating: Int = .zero,
+        text: String = ""
+    ) -> Self {
+        .init(
+            productId: productId,
+            locale: locale,
+            rating: rating,
+            text: text
+        )
+    }
+}
+#endif

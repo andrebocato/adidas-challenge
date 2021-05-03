@@ -7,6 +7,7 @@
 - **Notes:**
   - `App` is also the target for running unit and snapshot tests.
   - The snapshots were recorded in an iPhone 11, with iOS 14.5
+  - The full working code is in [the development branch](https://github.com/andrebocato/adidas-challenge/tree/dev)
 
 ## Design Choices
 ### Repository

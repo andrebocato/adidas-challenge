@@ -20,6 +20,7 @@ final class AddReviewReducerTests: XCTestCase {
     }()
     private let testScheduler = DispatchQueue.test
     private let reviewRepositoryStub = ReviewRepositoryStub()
+    private let dummyError: NSError = .init(domain: "", code: -1)
     
     // MARK: - Tests
 
@@ -73,10 +74,10 @@ final class AddReviewReducerTests: XCTestCase {
         store.send(.sendReview) { newState in
             newState.isLoading = true
             
-            guard self.initialState.rating != nil else {
-                XCTFail("Rating value should not be nil in this scenario. Assign it in the test setup.")
-                return
-            }
+            XCTAssertTrue(
+                self.initialState.rating != nil,
+                "Rating value should not be nil in this scenario. Assign it in the test setup."
+            )
             
             XCTAssertTrue(newState.reviewText.isEmpty)
         }
@@ -118,10 +119,10 @@ final class AddReviewReducerTests: XCTestCase {
                 XCTFail("Rating value should not be nil in this scenario. Assign it in the test setup.")
                 return
             }
-            guard !self.initialState.reviewText.isEmpty else {
-                XCTFail("Text value should not be empty this scenario. Assign it in the test setup.")
-                return
-            }
+            XCTAssertFalse(
+                self.initialState.reviewText.isEmpty,
+                "Text value should not be empty this scenario. Assign it in the test setup."
+            )
             
             newState.newReview = .fixture(
                 locale: localeMock,
@@ -147,7 +148,6 @@ final class AddReviewReducerTests: XCTestCase {
         let mockReviewText: String = "mock text"
         initialState.reviewText = mockReviewText
         
-        let dummyError: NSError = .init(domain: "", code: -1)
         reviewRepositoryStub.sendReviewResultToBeReturned = .failure(dummyError)
         let networkingErrorMessage: String = L10n.AddReview.Error.networkingMessage
 
@@ -168,10 +168,10 @@ final class AddReviewReducerTests: XCTestCase {
                 XCTFail("Rating value should not be nil in this scenario. Assign it in the test setup.")
                 return
             }
-            guard !self.initialState.reviewText.isEmpty else {
-                XCTFail("Text value should not be empty this scenario. Assign it in the test setup.")
-                return
-            }
+            XCTAssertFalse(
+                self.initialState.reviewText.isEmpty,
+                "Text value should not be empty this scenario. Assign it in the test setup."
+            )
             
             newState.newReview = .fixture(
                 locale: localeMock,

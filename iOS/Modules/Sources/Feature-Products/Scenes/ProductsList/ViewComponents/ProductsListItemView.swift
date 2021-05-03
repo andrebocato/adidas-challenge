@@ -1,15 +1,15 @@
 import Core_UI
 import SwiftUI
 
-struct ProductListItemView: View {
+public struct ProductListItemView: View {
     
     // MARK: - Properties
     
-    let viewData: ViewData
+    public let viewData: ViewData
     
     // MARK: - Content View
     
-    var body: some View {
+    public var body: some View {
         HStack {
             RemoteImage(url: viewData.imageURL)
                 .scaledToFill()

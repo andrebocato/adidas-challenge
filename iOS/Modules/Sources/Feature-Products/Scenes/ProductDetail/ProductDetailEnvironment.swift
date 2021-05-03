@@ -4,11 +4,12 @@ import Foundation
 import LightInjection
 
 struct ProductDetailEnvironment {
-    
+
     var generateUUIDString: () -> String
-    @Dependency var productRepository: ProductRepositoryProtocol
     var mainQueue: AnySchedulerOf<DispatchQueue>
     var currencyFormatter: CurrencyFormatterProtocol
+    @Dependency var productRepository: ProductRepositoryProtocol
+    @Dependency var reviewRepository: ReviewRepositoryProtocol
 
     init(
         generateUUIDString: @escaping () -> String = { UUID().uuidString },
@@ -27,9 +28,10 @@ extension ProductDetailEnvironment {
     
     static func mocking(
         generateUUIDString: @escaping () -> String = { "" },
-        productRepository: ProductRepositoryProtocol = ProductRepositoryDummy(),
         mainQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue.main.eraseToAnyScheduler(),
-        currencyFormatter: CurrencyFormatterProtocol = CurrencyFormatterDummy()
+        currencyFormatter: CurrencyFormatterProtocol = CurrencyFormatterDummy(),
+        productRepository: ProductRepositoryProtocol = ProductRepositoryDummy(),
+        reviewRepository: ReviewRepositoryProtocol = ReviewRepositoryDummy()
     ) -> Self {
         var instance: Self = .init(
             generateUUIDString: generateUUIDString,
@@ -37,6 +39,7 @@ extension ProductDetailEnvironment {
             currencyFormatter: currencyFormatter
         )
         instance._productRepository = .resolved(productRepository)
+        instance._reviewRepository = .resolved(reviewRepository)
         return instance
     }
 }

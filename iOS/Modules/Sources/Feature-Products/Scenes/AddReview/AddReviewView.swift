@@ -30,9 +30,8 @@ struct AddReviewView: View {
             }
             .alert(
                 store.scope(state: { $0.errorAlert }),
-                dismiss: .onAppear
+                dismiss: .dismissErrorAlert
             )
-            .onAppear { viewStore.send(.onAppear) }
         }
     }
     
@@ -55,7 +54,12 @@ struct AddReviewView: View {
                         alignment: .center
                     )
                     .foregroundColor(.yellow)
-                    .opacity(viewStore.rating == index ? 1 : 0.25)
+                    .opacity(
+                        starButtonOpacity(
+                            rating: viewStore.rating,
+                            index: index
+                        )
+                    )
                     .padding(.horizontal, DS.Spacing.small)
                 }
             }
@@ -107,5 +111,14 @@ struct AddReviewView: View {
             }
         }
         .padding()
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func starButtonOpacity(rating: Int?, index: Int) -> Double {
+        let minimum: Double = 0.25
+        let maximum: Double = 1
+        guard let rating = rating else { return minimum }
+        return rating < index ? minimum : maximum
     }
 }

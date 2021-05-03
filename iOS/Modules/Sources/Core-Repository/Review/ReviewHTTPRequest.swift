@@ -3,6 +3,7 @@ import Foundation
 
 enum ReviewHTTPRequest {
     case sendReview(ReviewDTO)
+    case getReviews(productID: String)
 }
 
 extension ReviewHTTPRequest: HTTPRequestProtocol {
@@ -12,6 +13,8 @@ extension ReviewHTTPRequest: HTTPRequestProtocol {
         switch self {
         case let .sendReview(review):
             return "/reviews/\(review.productId)"
+        case let .getReviews(productId):
+            return "/reviews/\(productId)"
         }
     }
     
@@ -19,6 +22,8 @@ extension ReviewHTTPRequest: HTTPRequestProtocol {
         switch self {
         case .sendReview:
             return .post
+        case .getReviews:
+            return .get
         }
     }
     
@@ -27,16 +32,18 @@ extension ReviewHTTPRequest: HTTPRequestProtocol {
         case let .sendReview(review):
             return .body([
                 "productId": review.productId,
-                "locale": review.locale,
+                "locale": review.locale ?? "",
                 "rating": review.rating,
                 "text": review.text
             ])
+        case .getReviews:
+            return .requestPlain
         }
     }
     
     var headers: [String : String]? {
         switch self {
-        case .sendReview:
+        case .sendReview, .getReviews:
             return [
                 "Content-Type": "application/json"
             ]

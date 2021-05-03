@@ -6,9 +6,6 @@ typealias AddReviewReducer = Reducer<AddReviewState, AddReviewAction, AddReviewE
 
 let addReviewReducer = AddReviewReducer { state, action, environment in
     switch action {
-    case .onAppear:
-        return .none
-        
     case let .updateRating(rating):
         state.rating = rating
         return .none
@@ -20,11 +17,26 @@ let addReviewReducer = AddReviewReducer { state, action, environment in
     case .sendReview:
         state.isLoading = true
         
+        guard let rating = state.rating else {
+            return .init(
+                value: .showErrorAlert(
+                    message: L10n.AddReview.Error.noRatingMessage
+                )
+            )
+        }
+        guard !state.reviewText.isEmpty else {
+            return .init(
+                value: .showErrorAlert(
+                    message: L10n.AddReview.Error.noTextMessage
+                )
+            )
+        }
+        
         let locale = environment.locale() ?? "nl-NL"
         let review: Review = .init(
             productId: state.productId,
             locale: locale,
-            rating: state.rating + 1, // Received value is an index (0-based), hence the +1
+            rating: rating + 1, // Received value is an index (0-based), hence the +1
             text: state.reviewText
         )
         state.newReview = review
@@ -39,18 +51,29 @@ let addReviewReducer = AddReviewReducer { state, action, environment in
     case .handleSendReview(.success(())):
         state.isLoading = false
         return .fireAndForget { [state] in
-            environment.onSendReviewSuccess(state.newReview)
+            environment.onSendReviewSuccess()
         }
         
     case let .handleSendReview(.failure(error)):
         state.isLoading = false
-        state.errorAlert = .init(
-            title: TextState(L10n.AddReview.Error.title),
-            dismissButton: .default(
-                TextState(L10n.AddReview.Error.buttonTitle),
-                send: .onAppear
+        return .init(
+            value: .showErrorAlert(
+                message: L10n.AddReview.Error.networkingMessage
             )
         )
+        
+    case let .showErrorAlert(message):
+        state.errorAlert = .init(
+            title: TextState(message),
+            dismissButton: .default(
+                TextState(L10n.AddReview.Error.buttonTitle)
+            )
+        )
+        return .none
+        
+    case .dismissErrorAlert:
+        state.isLoading = false
+        state.errorAlert = nil
         return .none
     }
 }

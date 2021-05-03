@@ -126,6 +126,9 @@ let package = Package(
                 "Core-RepositoryInterface",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "SnapshotTesting", package: "SnapshotTesting")
+            ],
+            exclude: [
+                "*.png"
             ]
         ),
     ]

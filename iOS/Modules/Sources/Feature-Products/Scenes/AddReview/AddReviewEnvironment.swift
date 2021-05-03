@@ -5,15 +5,15 @@ import LightInjection
 
 struct AddReviewEnvironment {
     
-    @Dependency var reviewRepository: ReviewRepositoryProtocol
     var mainQueue: AnySchedulerOf<DispatchQueue>
     var locale: () -> String?
-    let onSendReviewSuccess: (Review?) -> Void
+    var onSendReviewSuccess: () -> Void
+    @Dependency var reviewRepository: ReviewRepositoryProtocol
     
     public init(
         mainQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue.main.eraseToAnyScheduler(),
         locale: @escaping () -> String? = { Locale.autoupdatingCurrent.languageCode },
-        onSendReviewSuccess: @escaping (Review?) -> Void
+        onSendReviewSuccess: @escaping () -> Void
     ) {
         self.mainQueue = mainQueue
         self.locale = locale
@@ -28,7 +28,7 @@ extension AddReviewEnvironment {
     static func mocking(
         mainQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue.main.eraseToAnyScheduler(),
         locale: @escaping () -> String? = { Locale.autoupdatingCurrent.languageCode },
-        onSendReviewSuccess: @escaping (Review?) -> Void = { _ in },
+        onSendReviewSuccess: @escaping () -> Void = { },
         reviewRepository: ReviewRepositoryProtocol = ReviewRepositoryDummy()
     ) -> Self {
         var instance: Self = .init(

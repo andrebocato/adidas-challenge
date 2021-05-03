@@ -104,7 +104,7 @@ public struct ProductsListView: View {
                 )
             ),
             actionButton: .init(
-                text: L10n.ProductsList.Error.tryAgain,
+                text: L10n.ProductsList.Titles.tryAgain,
                 action: { viewStore.send(.fetchList) }
             )
         )

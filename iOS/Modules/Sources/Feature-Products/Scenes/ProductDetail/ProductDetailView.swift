@@ -30,6 +30,7 @@ struct ProductDetailView: View {
                         productData(with: viewData)
                         Spacer()
                         reviewsList(with: viewStore)
+                        addReviewButton(with: viewStore)
                     }
                 case let .errorFetchingProduct(message):
                     errorView(with: viewStore, message: message)
@@ -39,20 +40,12 @@ struct ProductDetailView: View {
             .navigationBarTitle(viewStore.productName)
             .sheet(
                 isPresented: .constant(viewStore.isPresentingAddReviewSheet),
-                onDismiss: { viewStore.send(.dismissAddReviewSheet()) },
-                content: {
-                    AddReviewView(
-                        store: .init(
-                            initialState: .init(productId: viewStore.productId),
-                            reducer: addReviewReducer,
-                            environment: AddReviewEnvironment(
-                                onSendReviewSuccess: { newReview in
-                                    viewStore.send(.dismissAddReviewSheet(newReview: newReview))
-                                }
-                            )
-                        )
-                    )
-                }
+                onDismiss: { viewStore.send(.dismissAddReviewSheet) },
+                content: { addReviewView(with: viewStore) }
+            )
+            .alert(
+                store.scope(state: { $0.errorAlert }),
+                dismiss: .dismissErrorAlert
             )
             .onAppear { viewStore.send(.fetchProduct) }
         }
@@ -96,31 +89,39 @@ struct ProductDetailView: View {
     
     @ViewBuilder
     private func reviewsList(with viewStore: ProductDetailViewStore) -> some View {
-        HStack {
-            Text("\(viewStore.reviews.count) customers reviewed this product")
-                .foregroundColor(.secondary)
-                .frame(alignment: .leading)
-                .padding(.horizontal, DS.Spacing.small)
-            Spacer()
-        }
-        
-        List(viewStore.reviews) { review in
-            ProductDetailReviewItemView(
-                viewData: .init(
-                    text: review.text,
-                    rating: String(review.rating)
+        if viewStore.isReloadingReviews {
+            activityIndicator()
+            
+        } else {
+            HStack {
+                Text("\(viewStore.reviews.count) customers reviewed this product")
+                    .foregroundColor(.secondary)
+                    .frame(alignment: .leading)
+                    .padding(.horizontal, DS.Spacing.small)
+                Spacer()
+            }
+            
+            List(viewStore.reviews) { review in
+                ProductDetailReviewItemView(
+                    viewData: .init(
+                        text: review.text,
+                        rating: String(review.rating)
+                    )
                 )
+            }
+            .overlay(
+                RoundedRectangle(
+                    cornerRadius: DS.CornerRadius.xxSmall,
+                    style: .continuous
+                )
+                .stroke(Color.secondary)
             )
+            .padding(.horizontal, DS.Spacing.small)
         }
-        .overlay(
-            RoundedRectangle(
-                cornerRadius: DS.CornerRadius.xxSmall,
-                style: .continuous
-            )
-            .stroke(Color.secondary)
-        )
-        .padding(.horizontal, DS.Spacing.small)
-        
+    }
+    
+    @ViewBuilder
+    private func addReviewButton(with viewStore: ProductDetailViewStore) -> some View {
         Button( // @TODO: make this button into a component
             action: { viewStore.send(.presentAddReviewSheet) }
         ) {
@@ -146,6 +147,21 @@ struct ProductDetailView: View {
     }
     
     @ViewBuilder
+    private func addReviewView(with viewStore: ProductDetailViewStore) -> some View {
+        AddReviewView(
+            store: .init(
+                initialState: .init(productId: viewStore.productId),
+                reducer: addReviewReducer,
+                environment: AddReviewEnvironment(
+                    onSendReviewSuccess: {
+                        viewStore.send(.dismissAddReviewSheet)
+                    }
+                )
+            )
+        )
+    }
+    
+    @ViewBuilder
     private func errorView(with viewStore: ProductDetailViewStore, message: String) -> some View {
         FillerView(
             model: .init(
@@ -157,7 +173,7 @@ struct ProductDetailView: View {
                 )
             ),
             actionButton: .init(
-                text: L10n.ProductDetail.Error.tryAgain,
+                text: L10n.ProductDetail.Titles.tryAgain,
                 action: { viewStore.send(.fetchProduct) }
             )
         )

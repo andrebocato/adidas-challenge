@@ -1,14 +1,15 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.3
 import PackageDescription
 
 let package = Package(
     name: "Modules",
     platforms: [
-        .iOS(.v13)
+        .iOS(.v14)
     ],
     products: [
         .library(
             name: "Modules",
+            type: .dynamic,
             targets: [
                 // MARK: - Core Interfaces
                 "Core-NetworkingInterface",
@@ -28,12 +29,18 @@ let package = Package(
     dependencies: [
         // MARK: - Third Party
         .package(
+            name: "LightInjection",
             url: "https://github.com/bocato/LightInjection.git",
             .branch("main")
         ),
         .package(
             url: "https://github.com/pointfreeco/swift-composable-architecture.git",
             from: "0.17.0"
+        ),
+        .package(
+            name: "SnapshotTesting",
+            url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
+            from: "1.8.2"
         ),
     ],
     targets: [
@@ -107,7 +114,9 @@ let package = Package(
         .target(
             name: "Feature-Products",
             dependencies: [
-                .product(name: "LightInjection", package: "LightInjection"),
+                "Core-UI",
+                "Core-RepositoryInterface",
+                "LightInjection",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
             ]
         ),
@@ -115,7 +124,12 @@ let package = Package(
             name: "Feature-ProductsTests",
             dependencies: [
                 "Feature-Products",
+                "Core-RepositoryInterface",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                "SnapshotTesting"
+            ],
+            exclude: [
+                "*.png"
             ]
         ),
     ]

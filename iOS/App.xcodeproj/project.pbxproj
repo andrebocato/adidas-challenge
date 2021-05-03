@@ -12,7 +12,6 @@
 		332C228123FEBCE1007823E5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 332C228023FEBCE1007823E5 /* Assets.xcassets */; };
 		332C228423FEBCE1007823E5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 332C228323FEBCE1007823E5 /* Preview Assets.xcassets */; };
 		332C228723FEBCE1007823E5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 332C228523FEBCE1007823E5 /* LaunchScreen.storyboard */; };
-		332C229223FEBCE1007823E5 /* AppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332C229123FEBCE1007823E5 /* AppUITests.swift */; };
 		332C229E23FEBDD9007823E5 /* Modules in Frameworks */ = {isa = PBXBuildFile; productRef = 332C229D23FEBDD9007823E5 /* Modules */; };
 /* End PBXBuildFile section */
 
@@ -35,8 +34,6 @@
 		332C228623FEBCE1007823E5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		332C228823FEBCE1007823E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		332C228D23FEBCE1007823E5 /* AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		332C229123FEBCE1007823E5 /* AppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUITests.swift; sourceTree = "<group>"; };
-		332C229323FEBCE1007823E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,7 +59,6 @@
 			isa = PBXGroup;
 			children = (
 				332C227923FEBCE0007823E5 /* App */,
-				332C229023FEBCE1007823E5 /* AppUITests */,
 				332C227823FEBCE0007823E5 /* Products */,
 				332C229C23FEBDD9007823E5 /* Frameworks */,
 			);
@@ -96,15 +92,6 @@
 				332C228323FEBCE1007823E5 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		332C229023FEBCE1007823E5 /* AppUITests */ = {
-			isa = PBXGroup;
-			children = (
-				332C229123FEBCE1007823E5 /* AppUITests.swift */,
-				332C229323FEBCE1007823E5 /* Info.plist */,
-			);
-			path = AppUITests;
 			sourceTree = "<group>";
 		};
 		332C229C23FEBDD9007823E5 /* Frameworks */ = {
@@ -227,7 +214,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				332C229223FEBCE1007823E5 /* AppUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -375,6 +361,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"App/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -394,6 +381,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"App/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -35,6 +35,28 @@ final class ProductDetailViewTests: XCTestCase {
 //        navigationController.navigationBar.prefersLargeTitles = true
         return hostingController
     }()
+    private let mockProductViewData: ProductDetailState.ProductViewData = .init(
+        from: .fixture(
+            name: "Product Name",
+            description: "This is a description to the product.",
+            imageURL: "www.dummy.com"
+        ),
+        formattedPrice: "€ 123,45"
+    )
+    private let mockReviewsData: [ProductDetailState.ReviewViewData] = [
+        .fixture(
+            from: .fixture(rating: 5, text: "Review text 1"),
+            id: "1"
+        ),
+        .fixture(
+            from: .fixture(rating: 3, text: "Review text 2"),
+            id: "2"
+        ),
+        .fixture(
+            from: .fixture(rating: 4, text: "Review text 3"),
+            id: "3"
+        )
+    ]
     
     // MARK: - Tests
 
@@ -62,36 +84,12 @@ final class ProductDetailViewTests: XCTestCase {
     // @TODO: mock image. it's currently displaying an activity indicator
     func test_snapshot_productDetail_loadedProduct() {
         // Given
-        let mockProduct: Product = .fixture(
-            name: "Product Name",
-            description: "This is a description to the product.",
-            imageURL: "www.dummy.com"
-        )
-        
         store = store.scope { _ in
             .init(
                 productId: "",
                 productName: "Product Name",
-                reviews: [
-                    .fixture(
-                        from: .fixture(rating: 5, text: "Review text 1"),
-                        id: "1"
-                    ),
-                    .fixture(
-                        from: .fixture(rating: 3, text: "Review text 2"),
-                        id: "2"
-                    ),
-                    .fixture(
-                        from: .fixture(rating: 4, text: "Review text 3"),
-                        id: "3"
-                    )
-                ],
-                scene: .loadedProduct(
-                    .init(
-                        from: mockProduct,
-                        formattedPrice: "€ 123,45"
-                    )
-                )
+                reviews: self.mockReviewsData,
+                scene: .loadedProduct(self.mockProductViewData)
             )
         }
         
@@ -137,6 +135,58 @@ final class ProductDetailViewTests: XCTestCase {
                 productName: "Product Name",
                 scene: .errorFetchingProduct(
                     message: L10n.ProductDetail.Error.unexpectedMessage
+                )
+            )
+        }
+        
+        // When
+        _ = sutContainer.view
+        
+        // Then
+        assertSnapshot(
+            matching: sutContainer,
+            as: .image,
+            record: isRecordModeEnabled
+        )
+    }
+    
+    func test_snapshot_reloadReviews_loading() {
+        // Given
+        store = store.scope { _ in
+            .init(
+                productId: "",
+                productName: "Product Name",
+                isReloadingReviews: true,
+                scene: .loadedProduct(self.mockProductViewData)
+            )
+        }
+        
+        // When
+        _ = sutContainer.view
+        
+        // Then
+        assertSnapshot(
+            matching: sutContainer,
+            as: .image,
+            record: isRecordModeEnabled
+        )
+    }
+    
+    // @TODO: study how to properly snapshot test alerts.
+    // https://www.pointfree.co/episodes/ep86-swiftui-snapshot-testing#t657
+    func test_snapshot_reloadReviews_error() {
+        // Given
+        store = store.scope { _ in
+            .init(
+                productId: "",
+                productName: "Product Name",
+                reviews: self.mockReviewsData,
+                scene: .loadedProduct(self.mockProductViewData),
+                errorAlert: .init(
+                    title: TextState(L10n.ProductDetail.Error.reloadReviewsMessage),
+                    dismissButton: .default(
+                        TextState(L10n.ProductDetail.Titles.ok)
+                    )
                 )
             )
         }

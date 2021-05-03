@@ -83,6 +83,11 @@
                BlueprintName = "Feature-ProductsTests"
                ReferencedContainer = "container:Modules">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "ProductDetailViewTests/test_snapshot_reloadReviews_error()">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>

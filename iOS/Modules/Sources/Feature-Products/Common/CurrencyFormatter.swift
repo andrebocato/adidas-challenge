@@ -6,7 +6,7 @@ protocol CurrencyFormatterProtocol {
 extension CurrencyFormatterProtocol {
     func format(
         _ value: Double,
-        locale: String = "nl-NL",
+        locale: String = "en-NL",
         currencyCode: String = "EUR"
     ) -> String {
         format(value, locale: locale, currencyCode: currencyCode)

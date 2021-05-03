@@ -30,7 +30,11 @@ public struct ProductsListView: View {
                     case .loadedList:
                         productsList(with: viewStore)
                     case .errorFetchingList:
-                        errorView(with: viewStore)
+                        ErrorFillerView(
+                            title: L10n.ProductsList.Error.title,
+                            subtitle: L10n.ProductsList.Error.subtitle,
+                            tryAgainAction: { viewStore.send(.fetchList) }
+                        )
                     }
                 }
                 .navigationBarTitle(L10n.ProductsList.Titles.products)
@@ -58,20 +62,16 @@ public struct ProductsListView: View {
                     send: { .updateSearchText($0) }
                 )
             )
-            
             Divider()
-            
-            if viewStore.isSearching {
-                searchResultsList(products: viewStore.searchResults)
-            } else {
-                searchResultsList(products: viewStore.products)
-            }
+            searchResultsList(with: viewStore)
         }
     }
 
     @ViewBuilder
-    private func searchResultsList(products: [Product]) -> some View {
-        List(products) { product in
+    private func searchResultsList(with viewStore: ProductsListViewStore) -> some View {
+        let products = viewStore.isSearching ? viewStore.searchResults : viewStore.products
+        let productsWithIndex = products.enumerated().map { $0 }
+        List(productsWithIndex, id: \.element.id) { index, product in
             // @FIXME: The last selected item is not being deselected upon returning to the list.
             // According to https://developer.apple.com/forums/thread/660468, might be an issue with a List inside a VStack
             // Tried to add `.id(UUID())` to the navigation link, did not work.
@@ -83,31 +83,13 @@ public struct ProductsListView: View {
                             productName: product.name
                         ),
                         reducer: productDetailReducer,
-                        environment: ProductDetailEnvironment()
+                        environment: .init()
                     )
                 )
             ) {
-                ProductListItemView(viewData: .init(from: product))
+                ProductListItemView(viewData: viewStore.itemsViewData[index])
             }
         }
-    }
-    
-    @ViewBuilder
-    private func errorView(with viewStore: ProductsListViewStore) -> some View {
-        FillerView(
-            model: .init(
-                title: L10n.ProductsList.Error.title,
-                subtitle: L10n.ProductsList.Error.subtitle,
-                image: .init(
-                    sfSymbol: "exclamationmark.circle",
-                    color: .red
-                )
-            ),
-            actionButton: .init(
-                text: L10n.ProductsList.Titles.tryAgain,
-                action: { viewStore.send(.fetchList) }
-            )
-        )
     }
 }
 

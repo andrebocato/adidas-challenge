@@ -5,6 +5,7 @@ public struct ProductsListState: Equatable {
     var products: [Product] = []
     var searchText: String = ""
     var searchResults: [Product] = []
+    var itemsViewData: [ProductListItemView.ViewData] = []
     
     var isSearching: Bool { !searchText.isEmpty }
     

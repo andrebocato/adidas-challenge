@@ -2,17 +2,20 @@ import Core_RepositoryInterface
 import Foundation
 
 extension ProductListItemView {
-    struct ViewData {
+    struct ViewData: Equatable {
         let imageURL: URL
         let name: String
         let description: String
-        let price: String
+        let formattedPrice: String
         
-        init(from vo: Product) {
+        init(
+            from vo: Product,
+            formattedPrice: String
+        ) {
             imageURL = URL(string: vo.imageURL)!
             name = vo.name
             description = vo.description
-            price = String(vo.price) // @TODO: change this
+            self.formattedPrice = formattedPrice
         }
     }
 }

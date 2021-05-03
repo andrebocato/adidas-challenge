@@ -33,7 +33,11 @@ struct ProductDetailView: View {
                         addReviewButton(with: viewStore)
                     }
                 case let .errorFetchingProduct(message):
-                    errorView(with: viewStore, message: message)
+                    ErrorFillerView(
+                        title: L10n.ProductDetail.Error.title,
+                        subtitle: message,
+                        tryAgainAction: { viewStore.send(.fetchProduct) }
+                    )
                 }
             }
             .padding()
@@ -74,7 +78,7 @@ struct ProductDetailView: View {
                 Text(viewData.productName)
                     .font(.callout)
                 Spacer()
-                Text(String(viewData.formattedPrice))
+                Text(viewData.formattedPrice)
                     .font(.callout)
                 Spacer()
             }
@@ -122,26 +126,11 @@ struct ProductDetailView: View {
     
     @ViewBuilder
     private func addReviewButton(with viewStore: ProductDetailViewStore) -> some View {
-        Button( // @TODO: make this button into a component
+        ButtonWithIcon(
+            text: L10n.ProductDetail.Titles.addReviewButton,
+            sfSymbol: "pencil",
             action: { viewStore.send(.presentAddReviewSheet) }
-        ) {
-            HStack(alignment: .center) {
-                Text(L10n.ProductDetail.Titles.addReviewButton)
-                    .bold()
-                Image(systemName: "pencil")
-            }
-            .padding()
-            .background(Color.blue)
-            .overlay(
-                RoundedRectangle(
-                    cornerRadius: DS.CornerRadius.small,
-                    style: .continuous
-                )
-                .stroke(Color.blue)
-            )
-            .foregroundColor(.white)
-            .cornerRadius(DS.CornerRadius.small)
-        }
+        )
         .frame(alignment: .leading)
         .padding()
     }
@@ -157,24 +146,6 @@ struct ProductDetailView: View {
                         viewStore.send(.dismissAddReviewSheet)
                     }
                 )
-            )
-        )
-    }
-    
-    @ViewBuilder
-    private func errorView(with viewStore: ProductDetailViewStore, message: String) -> some View {
-        FillerView(
-            model: .init(
-                title: L10n.ProductDetail.Error.title,
-                subtitle: message,
-                image: .init(
-                    sfSymbol: "exclamationmark.circle",
-                    color: .red
-                )
-            ),
-            actionButton: .init(
-                text: L10n.ProductDetail.Titles.tryAgain,
-                action: { viewStore.send(.fetchProduct) }
             )
         )
     }

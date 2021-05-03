@@ -16,6 +16,12 @@ public let productsListReducer = ProductsListReducer { state, action, environmen
         
     case let .handleList(.success(response)):
         state.products = response
+        state.itemsViewData = response.map {
+            .init(
+                from: $0,
+                formattedPrice: environment.currencyFormatter.format($0.price)
+            )
+        }
         return .init(value: .listProducts)
         
     case let .handleList(.failure(error)):

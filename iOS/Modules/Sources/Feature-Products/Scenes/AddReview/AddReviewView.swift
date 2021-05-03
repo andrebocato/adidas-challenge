@@ -104,8 +104,10 @@ struct AddReviewView: View {
             if viewStore.isLoading {
                 ActivityIndicator(style: .medium)
             } else {
-                Button(
-                    L10n.AddReview.Titles.sendButton,
+                ButtonWithIcon(
+                    text: L10n.AddReview.Titles.sendButton,
+                    sfSymbol: "checkmark.circle",
+                    backgroundColor: .secondary,
                     action: { viewStore.send(.sendReview) }
                 )
             }

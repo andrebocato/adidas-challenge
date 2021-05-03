@@ -9,7 +9,6 @@ struct ProductListItemView: View {
     
     // MARK: - Content View
     
-    // @TODO: implement a good layout
     var body: some View {
         HStack {
             RemoteImage(url: viewData.imageURL)
@@ -23,10 +22,16 @@ struct ProductListItemView: View {
             
             VStack(alignment: .leading) {
                 Text(viewData.name)
+                    .font(.callout)
+                    .bold()
                 Text(viewData.description)
-                Text(viewData.price)
+                    .font(.caption)
+                    .italic()
+                    .frame(alignment: .leading)
             }
             Spacer()
+            Text(viewData.formattedPrice)
+                .font(.callout)
         }
     }
 }

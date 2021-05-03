@@ -5,12 +5,15 @@ import LightInjection
 public struct ProductsListEnvironment {
     
     var mainQueue: AnySchedulerOf<DispatchQueue>
+    var currencyFormatter: CurrencyFormatterProtocol
     @Dependency var productsListRepository: ProductRepositoryProtocol
     
     public init(
-        mainQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue.main.eraseToAnyScheduler()
+        mainQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue.main.eraseToAnyScheduler(),
+        currencyFormatter: CurrencyFormatterProtocol = DefaultCurrencyFormatter()
     ) {
         self.mainQueue = mainQueue
+        self.currencyFormatter = currencyFormatter
     }
 }
 
@@ -20,10 +23,12 @@ extension ProductsListEnvironment {
     
     static func mocking(
         mainQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue.main.eraseToAnyScheduler(),
+        currencyFormatter: CurrencyFormatterProtocol = CurrencyFormatterDummy(),
         productsListRepository: ProductRepositoryProtocol = ProductRepositoryDummy()
     ) -> Self {
         var instance: Self = .init(
-            mainQueue: mainQueue
+            mainQueue: mainQueue,
+            currencyFormatter: currencyFormatter
         )
         instance._productsListRepository = .resolved(productsListRepository)
         return instance

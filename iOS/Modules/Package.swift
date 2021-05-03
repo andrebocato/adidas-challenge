@@ -29,6 +29,7 @@ let package = Package(
     dependencies: [
         // MARK: - Third Party
         .package(
+            name: "LightInjection",
             url: "https://github.com/bocato/LightInjection.git",
             .branch("main")
         ),
@@ -115,7 +116,7 @@ let package = Package(
             dependencies: [
                 "Core-UI",
                 "Core-RepositoryInterface",
-                .product(name: "LightInjection", package: "LightInjection"),
+                "LightInjection",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
             ]
         ),
@@ -125,7 +126,7 @@ let package = Package(
                 "Feature-Products",
                 "Core-RepositoryInterface",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                .product(name: "SnapshotTesting", package: "SnapshotTesting")
+                "SnapshotTesting"
             ],
             exclude: [
                 "*.png"

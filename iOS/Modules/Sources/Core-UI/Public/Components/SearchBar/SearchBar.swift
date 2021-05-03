@@ -2,12 +2,9 @@ import SwiftUI
 
 public struct SearchBar: View {
     
-    // MARK: - Dependencies
-    
-    private let layout: Layout
-    
     // MARK: - Properties
     
+    private let layout: Layout
     @Binding public var text: String
     @State private var isEditing = false
     
@@ -22,6 +19,7 @@ public struct SearchBar: View {
     }
     
     // MARK: - UI
+    
     public var body: some View {
         HStack {
             TextField(layout.placeholder, text: $text)

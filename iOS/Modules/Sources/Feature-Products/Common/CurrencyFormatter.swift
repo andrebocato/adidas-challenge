@@ -1,10 +1,10 @@
 import Foundation
 
-protocol CurrencyFormatterProtocol {
+public protocol CurrencyFormatterProtocol {
     func format(_ value: Double, locale: String, currencyCode: String) -> String
 }
 extension CurrencyFormatterProtocol {
-    func format(
+    public func format(
         _ value: Double,
         locale: String = "en-NL",
         currencyCode: String = "EUR"
@@ -13,7 +13,7 @@ extension CurrencyFormatterProtocol {
     }
 }
 
-final class DefaultCurrencyFormatter: CurrencyFormatterProtocol {
+public final class DefaultCurrencyFormatter: CurrencyFormatterProtocol {
     
     // MARK: - Dependencies
     
@@ -21,7 +21,7 @@ final class DefaultCurrencyFormatter: CurrencyFormatterProtocol {
     
     // MARK: - Initializaters
     
-    init(
+    public init(
         numberFormatter: NumberFormatter = .init()
     ) {
         self.numberFormatter = numberFormatter
@@ -29,7 +29,7 @@ final class DefaultCurrencyFormatter: CurrencyFormatterProtocol {
     
     // MARK: - Format Methods
     
-    func format(_ value: Double, locale: String, currencyCode: String) -> String {
+    public func format(_ value: Double, locale: String, currencyCode: String) -> String {
         numberFormatter.numberStyle = .currency
         numberFormatter.currencyCode = currencyCode
         numberFormatter.locale = Locale(identifier: locale)
@@ -40,7 +40,8 @@ final class DefaultCurrencyFormatter: CurrencyFormatterProtocol {
 }
 
 #if DEBUG
-struct CurrencyFormatterDummy: CurrencyFormatterProtocol {
-    func format(_ value: Double, locale: String, currencyCode: String) -> String { "" }
+public struct CurrencyFormatterDummy: CurrencyFormatterProtocol {
+    public init() { }
+    public func format(_ value: Double, locale: String, currencyCode: String) -> String { "" }
 }
 #endif

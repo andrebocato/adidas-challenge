@@ -24,6 +24,8 @@ final class ProductsListReducerTests: XCTestCase {
 
     func test_fetchList_whenFetchingSucceeds_shouldStoreProductsList() {
         // Given
+        let dummyFormattedPrice: String = ""
+        
         let productListMock: [Product] = [.fixture(), .fixture(), .fixture()]
         productRepositoryStub.fetchProductListResultToBeReturned = .success(productListMock)
         
@@ -40,6 +42,12 @@ final class ProductsListReducerTests: XCTestCase {
         testScheduler.advance()
         store.receive(.handleList(.success(productListMock))) { newState in
             newState.products = productListMock
+            newState.itemsViewData = productListMock.map {
+                .init(
+                    from: $0,
+                    formattedPrice: dummyFormattedPrice
+                )
+            }
             XCTAssertFalse(newState.products.isEmpty)
         }
         store.receive(.listProducts) { newState in

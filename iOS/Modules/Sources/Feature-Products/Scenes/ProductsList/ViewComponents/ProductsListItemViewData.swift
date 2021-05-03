@@ -2,13 +2,13 @@ import Core_RepositoryInterface
 import Foundation
 
 extension ProductListItemView {
-    struct ViewData: Equatable {
+    public struct ViewData: Equatable {
         let imageURL: URL
         let name: String
         let description: String
         let formattedPrice: String
         
-        init(
+        public init(
             from vo: Product,
             formattedPrice: String
         ) {

@@ -87,6 +87,12 @@
                <Test
                   Identifier = "ProductDetailViewTests/test_snapshot_reloadReviews_error()">
                </Test>
+               <Test
+                  Identifier = "ProductsListViewTests/test_snapshot_productsList_loadedProducts()">
+               </Test>
+               <Test
+                  Identifier = "ProductsListViewTests/test_snapshot_productsList_loadingProducts()">
+               </Test>
             </SkippedTests>
          </TestableReference>
       </Testables>

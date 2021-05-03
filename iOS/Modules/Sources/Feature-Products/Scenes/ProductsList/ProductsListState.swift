@@ -10,9 +10,15 @@ public struct ProductsListState: Equatable {
     var isSearching: Bool { !searchText.isEmpty }
     
     public init(
-        products: [Product] = []
+        scene: Scene = .loadingList,
+        searchText: String = "",
+        products: [Product] = [],
+        itemsViewData: [ProductListItemView.ViewData] = []
     ) {
+        self.scene = scene
+        self.searchText = searchText
         self.products = products
+        self.itemsViewData = itemsViewData
     }
 }
 

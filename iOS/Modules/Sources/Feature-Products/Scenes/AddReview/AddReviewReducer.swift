@@ -39,7 +39,6 @@ let addReviewReducer = AddReviewReducer { state, action, environment in
             rating: rating + 1, // Received value is an index (0-based), hence the +1
             text: state.reviewText
         )
-        state.newReview = review
         
         return environment
             .reviewRepository

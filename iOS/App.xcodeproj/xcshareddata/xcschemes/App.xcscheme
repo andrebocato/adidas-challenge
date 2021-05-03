@@ -83,17 +83,6 @@
                BlueprintName = "Feature-ProductsTests"
                ReferencedContainer = "container:Modules">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "AddReviewReducerTests/test_sendReview_whenSendingSucceds_shouldPerformSuccessAction()">
-               </Test>
-               <Test
-                  Identifier = "ProductDetailReducerTests/test_reviewPresentation_whenSheetIsDismissed_andAReviewIsPassed_shouldAppendNewReviewToReviewsDataList()">
-               </Test>
-               <Test
-                  Identifier = "ProductDetailReducerTests/test_reviewPresentation_whenSheetIsDismissed_andNoReviewIsPassed_shouldNotAddReviewToReviewsDataList()">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>

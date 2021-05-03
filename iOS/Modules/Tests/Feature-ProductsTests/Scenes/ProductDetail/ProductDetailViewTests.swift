@@ -35,7 +35,6 @@ final class ProductDetailViewTests: XCTestCase {
 //        navigationController.navigationBar.prefersLargeTitles = true
         return hostingController
     }()
-    private let currencyFormatterStub = CurrencyFormatterStub()
     
     // MARK: - Tests
 

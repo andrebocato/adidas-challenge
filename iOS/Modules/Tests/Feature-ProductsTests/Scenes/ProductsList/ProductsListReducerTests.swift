@@ -18,6 +18,7 @@ final class ProductsListReducerTests: XCTestCase {
     }()
     private let testScheduler = DispatchQueue.test
     private let productRepositoryStub = ProductRepositoryStub()
+    private let dummyError: NSError = .init(domain: "", code: -1)
     
     // MARK: - Tests
 
@@ -48,7 +49,6 @@ final class ProductsListReducerTests: XCTestCase {
     
     func test_fetchList_whenFetchingFails_shouldDisplayErrorView() {
         // Given
-        let dummyError: NSError = .init(domain: "", code: -1)
         productRepositoryStub.fetchProductListResultToBeReturned = .failure(dummyError)
         
         store.environment = .mocking(

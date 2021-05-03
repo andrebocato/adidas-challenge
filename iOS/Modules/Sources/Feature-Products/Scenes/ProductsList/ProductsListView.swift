@@ -68,8 +68,7 @@ public struct ProductsListView: View {
     }
 
     @ViewBuilder
-    private func searchResultsList(with viewStore: ProductsListViewStore
-    ) -> some View {
+    private func searchResultsList(with viewStore: ProductsListViewStore) -> some View {
         let products = viewStore.isSearching ? viewStore.searchResults : viewStore.products
         let productsWithIndex = products.enumerated().map { $0 }
         List(productsWithIndex, id: \.element.id) { index, product in

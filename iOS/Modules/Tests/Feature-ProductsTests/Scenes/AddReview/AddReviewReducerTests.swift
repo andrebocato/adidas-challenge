@@ -74,8 +74,8 @@ final class AddReviewReducerTests: XCTestCase {
         store.send(.sendReview) { newState in
             newState.isLoading = true
             
-            XCTAssertTrue(
-                self.initialState.rating != nil,
+            XCTAssertNotNil(
+                self.initialState.rating,
                 "Rating value should not be nil in this scenario. Assign it in the test setup."
             )
             
@@ -115,19 +115,13 @@ final class AddReviewReducerTests: XCTestCase {
         store.send(.sendReview) { newState in
             newState.isLoading = true
             
-            guard let initialRating = self.initialState.rating else {
-                XCTFail("Rating value should not be nil in this scenario. Assign it in the test setup.")
-                return
-            }
+            XCTAssertNotNil(
+                self.initialState.rating,
+                "Rating value should not be nil in this scenario. Assign it in the test setup."
+            )
             XCTAssertFalse(
                 self.initialState.reviewText.isEmpty,
                 "Text value should not be empty this scenario. Assign it in the test setup."
-            )
-            
-            newState.newReview = .fixture(
-                locale: localeMock,
-                rating: initialRating + 1,
-                text: mockReviewText
             )
         }
         testScheduler.advance()
@@ -164,19 +158,13 @@ final class AddReviewReducerTests: XCTestCase {
         store.send(.sendReview) { newState in
             newState.isLoading = true
             
-            guard let initialRating = self.initialState.rating else {
-                XCTFail("Rating value should not be nil in this scenario. Assign it in the test setup.")
-                return
-            }
+            XCTAssertNotNil(
+                self.initialState.rating,
+                "Rating value should not be nil in this scenario. Assign it in the test setup."
+            )
             XCTAssertFalse(
                 self.initialState.reviewText.isEmpty,
                 "Text value should not be empty this scenario. Assign it in the test setup."
-            )
-            
-            newState.newReview = .fixture(
-                locale: localeMock,
-                rating: initialRating + 1,
-                text: mockReviewText
             )
         }
         testScheduler.advance()

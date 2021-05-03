@@ -7,5 +7,4 @@ struct AddReviewState: Equatable {
     var reviewText: String = ""
     var errorAlert: AlertState<AddReviewAction>?
     var isLoading: Bool = false
-    var newReview: Review? = nil
 }

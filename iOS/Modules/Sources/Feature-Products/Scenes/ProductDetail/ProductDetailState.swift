@@ -1,3 +1,4 @@
+import ComposableArchitecture
 import Core_RepositoryInterface
 import Foundation
 
@@ -8,7 +9,9 @@ struct ProductDetailState: Equatable {
     var product: Product? = nil
     var reviews: [ReviewViewData] = []
     var isPresentingAddReviewSheet: Bool = false
+    var isReloadingReviews: Bool = false
     var scene: Scene = .loadingProduct
+    var errorAlert: AlertState<ProductDetailAction>?
 }
 
 extension ProductDetailState {
@@ -53,7 +56,15 @@ extension ProductDetailState {
             self.id = id
             rating = vo.rating
             text = vo.text
-            locale = vo.locale
+            locale = vo.locale ?? "nl-NL"
+        }
+        
+        func hasSameData(
+            as other: ReviewViewData
+        ) -> Bool {
+            return rating == other.rating
+                && text == other.text
+                && locale == other.locale
         }
     }
     

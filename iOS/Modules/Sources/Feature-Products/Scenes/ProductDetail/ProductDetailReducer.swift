@@ -21,13 +21,19 @@ let productDetailReducer = ProductDetailReducer { state, action, environment in
         
     case let .handleFetchProduct(.failure(error)):
         return .init(
-            value: .displayError(message: L10n.ProductDetail.Error.networkingMessage)
+            value: .displayError(
+                mode: .fullscreen,
+                message: L10n.ProductDetail.Error.networkingMessage
+            )
         )
         
     case .populateView:
         guard let product = state.product else {
             return .init(
-                value: .displayError(message: L10n.ProductDetail.Error.unexpectedMessage)
+                value: .displayError(
+                    mode: .fullscreen,
+                    message: L10n.ProductDetail.Error.unexpectedMessage
+                )
             )
         }
         
@@ -45,28 +51,67 @@ let productDetailReducer = ProductDetailReducer { state, action, environment in
         state.scene = .loadedProduct(productViewData)
         return .none
         
-    case let .displayError(message):
-        state.scene = .errorFetchingProduct(message: message)
+    case let .displayError(displayMode, message):
+        switch displayMode {
+        case .alert:
+            state.errorAlert = .init(
+                title: TextState(message),
+                dismissButton: .default(
+                    TextState(L10n.ProductDetail.Titles.ok)
+                )
+            )
+        case .fullscreen:
+            state.scene = .errorFetchingProduct(message: message)
+        }
         return .none
         
     case .presentAddReviewSheet:
         state.isPresentingAddReviewSheet = true
         return .none
         
-    case let .dismissAddReviewSheet(newReview):
+    case .dismissAddReviewSheet:
         state.isPresentingAddReviewSheet = false
-        if let newReview = newReview {
-            state.reviews.append(
-                .init(
-                    from: newReview,
-                    id: environment.generateUUIDString()
-                )
+        return .init(value: .fetchReviews)
+        
+    case .fetchReviews:
+        state.isReloadingReviews = true
+        return environment
+            .reviewRepository
+            .getReviews(for: state.productId)
+            .receive(on: environment.mainQueue)
+            .catchToEffect()
+            .map(ProductDetailAction.handleFetchReviews)
+        
+    case let .handleFetchReviews(.success(response)):
+        state.isReloadingReviews = false
+        
+        var currentReviews = state.reviews
+        let updatedReviews: [ProductDetailState.ReviewViewData] = response.map {
+            .init(
+                from: $0,
+                id: environment.generateUUIDString()
             )
         }
+        updatedReviews.forEach { newReview in
+            if !currentReviews.contains(where: { $0.hasSameData(as: newReview) } ) {
+                currentReviews.append(newReview)
+            }
+        }
+        
+        state.reviews = currentReviews
+        return .none
+        
+    case let .handleFetchReviews(.failure(error)):
+        state.isReloadingReviews = false
+        return .init(
+            value: .displayError(
+                mode: .alert,
+                message: L10n.ProductDetail.Error.reloadReviewsMessage
+            )
+        )
+        
+    case .dismissErrorAlert:
+        state.errorAlert = nil
         return .none
     }
 }
-
-// Note:
-// I've chosen to pass the newly created review as a parameter from the AddReviewView
-// because i've had so many problems to get the reviews list from the request.

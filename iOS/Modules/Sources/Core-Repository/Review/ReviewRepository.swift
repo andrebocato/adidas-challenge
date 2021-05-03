@@ -8,13 +8,16 @@ public final class ReviewRepository: ReviewRepositoryProtocol {
     // MARK: - Dependencies
     
     private let dispatcher: HTTPRequestDispatcherProtocol
+    private let decoder: JSONDecoder
     
     // MARK: - Initializers
     
     public init(
-        dispatcher: HTTPRequestDispatcherProtocol
+        dispatcher: HTTPRequestDispatcherProtocol,
+        decoder: JSONDecoder = .init()
     ) {
         self.dispatcher = dispatcher
+        self.decoder = decoder
     }
     
     // MARK: - Request
@@ -31,6 +34,19 @@ public final class ReviewRepository: ReviewRepositoryProtocol {
         return dispatcher
             .dataPublisher(for: request)
             .tryMap { _ in () }
+            .mapError { $0 }
+            .eraseToAnyPublisher()
+    }
+    
+    public func getReviews(for productID: String) -> AnyPublisher<[Review], Error> {
+        let request: ReviewHTTPRequest = .getReviews(productID: productID)
+        return dispatcher
+            .dataPublisher(for: request)
+            .tryMap { [decoder] data in
+                let decodedObjects = try decoder.decode([ReviewDTO].self, from: data)
+                return decodedObjects.map { .init(from: $0) }
+            }
+            .mapError { $0 }
             .eraseToAnyPublisher()
     }
 }

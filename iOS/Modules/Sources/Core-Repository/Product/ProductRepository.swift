@@ -30,6 +30,7 @@ public final class ProductRepository: ProductRepositoryProtocol {
                 let decodedObjects = try decoder.decode([ProductDTO].self, from: data)
                 return decodedObjects.map { .init(from: $0) }
             }
+            .mapError { $0 }
             .eraseToAnyPublisher()
     }
     
@@ -41,6 +42,7 @@ public final class ProductRepository: ProductRepositoryProtocol {
                 let decodedObject = try decoder.decode(ProductDTO.self, from: data)
                 return .init(from: decodedObject)
             }
+            .mapError { $0 }
             .eraseToAnyPublisher()
     }
 }

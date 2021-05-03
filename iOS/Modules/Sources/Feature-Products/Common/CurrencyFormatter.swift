@@ -43,11 +43,4 @@ final class DefaultCurrencyFormatter: CurrencyFormatterProtocol {
 struct CurrencyFormatterDummy: CurrencyFormatterProtocol {
     func format(_ value: Double, locale: String, currencyCode: String) -> String { "" }
 }
-
-final class CurrencyFormatterStub: CurrencyFormatterProtocol {
-    public var formatTextToBeReturned: String = ""
-    public func format(_ value: Double, locale: String, currencyCode: String) -> String {
-        formatTextToBeReturned
-    }
-}
 #endif

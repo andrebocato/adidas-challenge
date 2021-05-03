@@ -4,8 +4,8 @@ import LightInjection
 
 public struct ProductsListEnvironment {
     
-    @Dependency var productsListRepository: ProductRepositoryProtocol
     var mainQueue: AnySchedulerOf<DispatchQueue>
+    @Dependency var productsListRepository: ProductRepositoryProtocol
     
     public init(
         mainQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue.main.eraseToAnyScheduler()

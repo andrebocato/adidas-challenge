@@ -4,7 +4,9 @@
 - Start the local server with `docker-compose`
 - Open `AdidasChallenge.xcworkspace` and wait for SPM to resolve its packages
 - Run the `App` target 
-- **Note:** `App` is also the target for running unit and snapshot tests.
+- **Notes:**
+  - `App` is also the target for running unit and snapshot tests.
+  - The snapshots were recorded in an iPhone 11, with iOS 14.5
 
 ## Design Choices
 ### Repository

@@ -56,7 +56,7 @@ extension ProductDetailState {
             self.id = id
             rating = vo.rating
             text = vo.text
-            locale = vo.locale ?? "nl-NL"
+            locale = vo.locale ?? "en-NL"
         }
         
         func hasSameData(

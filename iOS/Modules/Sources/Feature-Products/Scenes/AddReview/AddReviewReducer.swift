@@ -32,7 +32,7 @@ let addReviewReducer = AddReviewReducer { state, action, environment in
             )
         }
         
-        let locale = environment.locale() ?? "nl-NL"
+        let locale = environment.locale() ?? "en-NL"
         let review: Review = .init(
             productId: state.productId,
             locale: locale,

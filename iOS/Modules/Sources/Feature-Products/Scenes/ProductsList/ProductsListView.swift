@@ -65,6 +65,14 @@ public struct ProductsListView: View {
             Divider()
             searchResultsList(with: viewStore)
         }
+        .navigationBarItems(
+            trailing: Button(
+                action: { viewStore.send(.fetchList) },
+                label: {
+                    Image(systemName: "arrow.clockwise")
+                }
+            )
+        )
     }
 
     @ViewBuilder
